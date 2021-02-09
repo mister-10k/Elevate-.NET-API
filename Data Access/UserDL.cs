@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Elevate.Data
 {
-    public class UsersDL : IUsersDL
+    public class UserDL : IUserDL
     {
         public string Test()
         {

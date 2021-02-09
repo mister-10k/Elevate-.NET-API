@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Elevate.Business
 {
-    public class UsersBL : IUsersBL
+    public class UserBL : IUserBL
     {
-        private readonly IUsersDL usersDL;
-        public UsersBL(IUsersDL usersDL)
+        private readonly IUserDL usersDL;
+        public UserBL(IUserDL usersDL)
         {
             this.usersDL = usersDL;
         }

@@ -73,9 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\UnityConfig.cs" />
-    <Compile Include="BenifitsPackageBL.cs" />
+    <Compile Include="EmployeeBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UsersBL.cs" />
+    <Compile Include="UserBL.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data Access\Elevate.Data.csproj">

@@ -18,7 +18,11 @@ namespace Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int CompanyId { get; set; }
+        public System.DateTime CreatedAt { get; set; }
+        public Nullable<System.DateTime> ModifiedAt { get; set; }
         public bool IsActive { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
     
         public virtual Company Company { get; set; }
     }

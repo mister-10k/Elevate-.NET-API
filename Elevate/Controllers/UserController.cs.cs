@@ -8,17 +8,17 @@ using System.Web.Http;
 
 namespace Elevate.Controllers
 {
-    public class UsersController : ApiController
+    public class UserController : ApiController
     {
-        private readonly IUsersBL usersBL;
-        public UsersController(IUsersBL usersBL)
+        private readonly IUserBL userBL;
+        public UserController(IUserBL userBL)
         {
-            this.usersBL = usersBL;
+            this.userBL = userBL;
         }
 
         public string Get(int id)
         {
-            return usersBL.Test();
+            return userBL.Test();
         }
 
         // POST api/values

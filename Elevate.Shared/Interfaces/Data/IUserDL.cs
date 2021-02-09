@@ -1,13 +1,13 @@
-﻿using Elevate.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Elevate.Data
+namespace Elevate.Shared
 {
-    public class BenifitsPackageDL : IBenifitsPackageDL
+    public interface IUserDL
     {
+        string Test();
     }
 }

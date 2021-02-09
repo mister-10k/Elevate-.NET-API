@@ -19,6 +19,9 @@ namespace Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int RelationshipId { get; set; }
+        public System.DateTime CreatedAt { get; set; }
+        public Nullable<System.DateTime> ModifiedAt { get; set; }
+        public bool IsActive { get; set; }
     
         public virtual Employee Employee { get; set; }
         public virtual Relationship Relationship { get; set; }

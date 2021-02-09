@@ -13,6 +13,7 @@
           <Property Name="Name" Type="varchar" MaxLength="500" Nullable="false" />
           <Property Name="DisplayName" Type="varchar" MaxLength="500" Nullable="false" />
           <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedAt" Type="datetime" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Employee">
@@ -23,6 +24,8 @@
           <Property Name="FirstName" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="LastName" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="CompanyId" Type="int" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedAt" Type="datetime" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="EmployeeDependent">
@@ -34,6 +37,9 @@
           <Property Name="FirstName" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="LastName" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="RelationshipId" Type="int" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedAt" Type="datetime" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Relationship">
           <Key>
@@ -43,6 +49,7 @@
           <Property Name="Name" Type="varchar" MaxLength="500" Nullable="false" />
           <Property Name="DisplayName" Type="varchar" MaxLength="500" Nullable="false" />
           <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedAt" Type="datetime" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="User">
@@ -53,7 +60,11 @@
           <Property Name="FirstName" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="LastName" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="CompanyId" Type="int" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedAt" Type="datetime" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="300" Nullable="false" />
         </EntityType>
         <Association Name="FK_Employee_CompanyId">
           <End Role="Company" Type="Self.Company" Multiplicity="1" />
@@ -133,7 +144,6 @@
         <EntityContainer Name="ElevateEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Companies" EntityType="ElevateModel.Company" />
           <EntitySet Name="Employees" EntityType="ElevateModel.Employee" />
-          <EntitySet Name="EmployeeDependents" EntityType="ElevateModel.EmployeeDependent" />
           <EntitySet Name="Relationships" EntityType="ElevateModel.Relationship" />
           <EntitySet Name="Users" EntityType="ElevateModel.User" />
           <AssociationSet Name="FK_Employee_CompanyId" Association="ElevateModel.FK_Employee_CompanyId">
@@ -144,6 +154,7 @@
             <End Role="Company" EntitySet="Companies" />
             <End Role="User" EntitySet="Users" />
           </AssociationSet>
+          <EntitySet Name="EmployeeDependents" EntityType="ElevateModel.EmployeeDependent" />
           <AssociationSet Name="FK_EmployeeDependent_EmployeeId" Association="ElevateModel.FK_EmployeeDependent_EmployeeId">
             <End Role="Employee" EntitySet="Employees" />
             <End Role="EmployeeDependent" EntitySet="EmployeeDependents" />
@@ -152,7 +163,7 @@
             <End Role="Relationship" EntitySet="Relationships" />
             <End Role="EmployeeDependent" EntitySet="EmployeeDependents" />
           </AssociationSet>
-        </EntityContainer>
+          </EntityContainer>
         <EntityType Name="Company">
           <Key>
             <PropertyRef Name="ID" />
@@ -161,6 +172,7 @@
           <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="DisplayName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Employees" Relationship="ElevateModel.FK_Employee_CompanyId" FromRole="Company" ToRole="Employee" />
           <NavigationProperty Name="Users" Relationship="ElevateModel.FK_User_CompanyId" FromRole="Company" ToRole="User" />
@@ -173,21 +185,11 @@
           <Property Name="FirstName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="CompanyId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Company" Relationship="ElevateModel.FK_Employee_CompanyId" FromRole="Employee" ToRole="Company" />
           <NavigationProperty Name="EmployeeDependents" Relationship="ElevateModel.FK_EmployeeDependent_EmployeeId" FromRole="Employee" ToRole="EmployeeDependent" />
-        </EntityType>
-        <EntityType Name="EmployeeDependent">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="EmployeeId" Type="Int32" Nullable="false" />
-          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="LastName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="RelationshipId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Employee" Relationship="ElevateModel.FK_EmployeeDependent_EmployeeId" FromRole="EmployeeDependent" ToRole="Employee" />
-          <NavigationProperty Name="Relationship" Relationship="ElevateModel.FK_EmployeeDependent_RelationshipId" FromRole="EmployeeDependent" ToRole="Relationship" />
         </EntityType>
         <EntityType Name="Relationship">
           <Key>
@@ -197,6 +199,7 @@
           <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="DisplayName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="EmployeeDependents" Relationship="ElevateModel.FK_EmployeeDependent_RelationshipId" FromRole="Relationship" ToRole="EmployeeDependent" />
         </EntityType>
@@ -208,8 +211,12 @@
           <Property Name="FirstName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="CompanyId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Company" Relationship="ElevateModel.FK_User_CompanyId" FromRole="User" ToRole="Company" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_Employee_CompanyId">
           <End Type="ElevateModel.Company" Role="Company" Multiplicity="1" />
@@ -235,6 +242,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="EmployeeDependent">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeId" Type="Int32" Nullable="false" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="RelationshipId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedAt" Type="DateTime" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Employee" Relationship="ElevateModel.FK_EmployeeDependent_EmployeeId" FromRole="EmployeeDependent" ToRole="Employee" />
+          <NavigationProperty Name="Relationship" Relationship="ElevateModel.FK_EmployeeDependent_RelationshipId" FromRole="EmployeeDependent" ToRole="Relationship" />
+        </EntityType>
         <Association Name="FK_EmployeeDependent_EmployeeId">
           <End Type="ElevateModel.Employee" Role="Employee" Multiplicity="1" />
           <End Type="ElevateModel.EmployeeDependent" Role="EmployeeDependent" Multiplicity="*" />
@@ -269,6 +291,7 @@
             <EntityTypeMapping TypeName="ElevateModel.Company">
               <MappingFragment StoreEntitySet="Company">
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
                 <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -280,20 +303,11 @@
             <EntityTypeMapping TypeName="ElevateModel.Employee">
               <MappingFragment StoreEntitySet="Employee">
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="CompanyId" ColumnName="CompanyId" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="EmployeeDependents">
-            <EntityTypeMapping TypeName="ElevateModel.EmployeeDependent">
-              <MappingFragment StoreEntitySet="EmployeeDependent">
-                <ScalarProperty Name="RelationshipId" ColumnName="RelationshipId" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -302,6 +316,7 @@
             <EntityTypeMapping TypeName="ElevateModel.Relationship">
               <MappingFragment StoreEntitySet="Relationship">
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
                 <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -312,10 +327,28 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="ElevateModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="CompanyId" ColumnName="CompanyId" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmployeeDependents">
+            <EntityTypeMapping TypeName="ElevateModel.EmployeeDependent">
+              <MappingFragment StoreEntitySet="EmployeeDependent">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="RelationshipId" ColumnName="RelationshipId" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

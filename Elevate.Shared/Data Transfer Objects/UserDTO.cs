@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
 namespace Elevate.Shared
 {
-    public interface IUsersBL
+    public class UserDTO : PersonDTO
     {
-        string Test();
+        public string CompanyId { get; set; }
     }
 }

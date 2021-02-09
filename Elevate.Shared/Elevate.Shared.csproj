@@ -91,16 +91,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\UnityConfig.cs" />
-    <Compile Include="Interfaces\Business\IUsersBL.cs" />
-    <Compile Include="Interfaces\Business\IBenifitsPackageBL.cs" />
-    <Compile Include="Interfaces\Data\IBenifitsPackageDL.cs" />
-    <Compile Include="Interfaces\Data\IUsersDL.cs" />
+    <Compile Include="Data Transfer Objects\EmployeeDependentDTO.cs" />
+    <Compile Include="Data Transfer Objects\EmployeeDTO.cs" />
+    <Compile Include="Data Transfer Objects\PersonDTO.cs" />
+    <Compile Include="Data Transfer Objects\UserDTO.cs" />
+    <Compile Include="Interfaces\Business\IUserBL.cs" />
+    <Compile Include="Interfaces\Business\IEmployeeBL.cs" />
+    <Compile Include="Interfaces\Data\IEmployeeDL.cs" />
+    <Compile Include="Interfaces\Data\IUserDL.cs" />
     <Compile Include="IOC\UnityResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data Transfer Objects\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

@@ -1,0 +1,254 @@
+﻿using Elevate.Shared;
+using Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Elevate.Data
+{
+    public class EmployeeDL : IEmployeeDL
+    {
+        public EmployeeDTO CreateEmployee(EmployeeDTO employeeDTO)
+        {
+            EmployeeDTO ret = null;
+
+            try
+            {
+                using (ElevateEntities dbContext = new ElevateEntities())
+                {
+                    var createdAt = DateTime.Now;
+                    var newEmployee = new Employee
+                    {
+                        FirstName = employeeDTO.FirstName,
+                        LastName = employeeDTO.LastName,
+                        CompanyId = employeeDTO.CompanyId,
+                        CreatedAt = createdAt,
+                        IsActive = true
+                    };
+
+                    dbContext.Employees.Add(newEmployee);
+                    var employeeSaved = dbContext.SaveChanges() > 0;
+
+                    if (employeeSaved)
+                        AddEmployeeDependents(dbContext, employeeDTO.Dependents, newEmployee.ID);
+
+                    var dependentsSaved = employeeSaved;
+
+                    if (employeeSaved && (dbContext.SaveChanges() > 0 || employeeDTO.Dependents.Count == 0))
+                    {
+                        employeeDTO.Id = newEmployee.ID;
+                        employeeDTO.CreatedAt = createdAt;
+                        ret = employeeDTO;
+                    }
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Data Layer: CreateEmployee Exception Msg", ex.Message);
+            }
+
+            return ret;
+        }
+
+        private void AddEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentDTO> dependents, int employeeId)
+        {
+            foreach (var dependent in dependents)
+            {
+                var newDependent = new EmployeeDependent
+                {
+                    EmployeeId = employeeId,
+                    FirstName = dependent.FirstName,
+                    LastName = dependent.LastName,
+                    RelationshipId = dependent.RelationshipId,
+                    CreatedAt = DateTime.Now,
+                    IsActive = true
+                };
+
+                dbContext.EmployeeDependents.Add(newDependent);
+            }
+        }
+
+        public EmployeeDTO GetEmployee(int employeeId)
+        {
+            EmployeeDTO ret = null;
+
+            try
+            {
+                using (ElevateEntities dbContext = new ElevateEntities())
+                {
+                    var employee = dbContext.Employees.FirstOrDefault(x => x.ID == employeeId);
+                    if (employee != null)
+                    {
+                        ret = new EmployeeDTO
+                        {
+                            Id = employee.ID,
+                            FirstName = employee.FirstName,
+                            LastName = employee.LastName,
+                            CompanyName = employee.Company.Name,
+                            CompanyDisplayName = employee.Company.DisplayName,
+                            CompanyId = employee.CompanyId,
+                            CreatedAt = employee.CreatedAt,
+                            ModifiedAt = employee.ModifiedAt,
+                            Dependents = new List<EmployeeDependentDTO>()
+                        };
+                        GetEmployeeDependents(dbContext, ret.Dependents, employeeId);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Data Layer: GetEmployee Exception Msg", ex.Message);
+            }
+
+            return ret;
+        }
+
+        private void GetEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentDTO> dependents, int employeeId)
+        {
+            var dbDependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId && x.IsActive);
+
+            foreach(var dbDependent in dbDependents)
+            {
+                var d = new EmployeeDependentDTO
+                {
+                    Id = dbDependent.ID,
+                    EmployeeId = dbDependent.EmployeeId,
+                    FirstName = dbDependent.FirstName,
+                    LastName = dbDependent.LastName,
+                    RelationshipId = dbDependent.RelationshipId,
+                    CreatedAt = dbDependent.CreatedAt,
+                    ModifiedAt = dbDependent.ModifiedAt
+                };
+                dependents.Add(d);
+            }
+        }
+
+        public EmployeeDTO UpdateEmployee(EmployeeDTO employeeDTO)
+        {
+            EmployeeDTO ret = null;
+
+            try
+            {
+                using (ElevateEntities dbContext = new ElevateEntities())
+                {
+                    var modifiedAt = DateTime.Now;
+                    var employee = dbContext.Employees.FirstOrDefault(x => x.ID == employeeDTO.Id);
+                    if (employee != null)
+                    {
+                        UpdateEmployeeDependents(dbContext, employeeDTO.Dependents, employeeDTO.Id);
+                        employee.FirstName = employeeDTO.FirstName;
+                        employee.LastName = employeeDTO.LastName;
+                        employee.CompanyId = employeeDTO.CompanyId;
+                        employee.ModifiedAt = modifiedAt;
+                    }
+
+                    if (dbContext.SaveChanges() > 0)
+                    {
+                        employeeDTO.ModifiedAt = modifiedAt;
+                        ret = employeeDTO;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Data Layer: UpdateEmployee Exception Msg", ex.Message);
+            }
+
+            return ret;
+        }
+
+        private void UpdateEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentDTO> dependents, int employeeId)
+        {
+            var dbDependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId && x.IsActive);
+
+            // check for deletes
+            foreach(var dbDependent in dbDependents)
+            {
+                if (dependents.FirstOrDefault(x => x.Id == dbDependent.ID) == null)
+                {
+                    dbDependent.IsActive = false;
+                    dbDependent.ModifiedAt = DateTime.Now;
+                }
+            }
+
+            foreach (var dependent in dependents)
+            {
+                if (dependent.Id == 0)
+                {
+                    // add
+                    var newDependent = new EmployeeDependent
+                    {
+                        EmployeeId = employeeId,
+                        FirstName = dependent.FirstName,
+                        LastName = dependent.LastName,
+                        RelationshipId = dependent.RelationshipId,
+                        CreatedAt = DateTime.Now,
+                        IsActive = true
+                    };
+
+                    dbContext.EmployeeDependents.Add(newDependent);
+                }
+                else
+                {
+                    // update
+                    var dbDependent = dbDependents.FirstOrDefault(x => x.ID == dependent.Id);
+                    if (dbDependent != null)
+                    {
+                        dbDependent.FirstName = dependent.FirstName;
+                        dbDependent.LastName = dependent.LastName;
+                        dbDependent.RelationshipId = dependent.RelationshipId;
+                        dbDependent.ModifiedAt = DateTime.Now;
+                    }
+                }
+            }
+        }
+
+        public EmployeeDTO DeleteEmployee(int employeeId)
+        {
+            EmployeeDTO ret = null;
+
+            try
+            {
+                using (ElevateEntities dbContext = new ElevateEntities())
+                {
+                    var employee = dbContext.Employees.FirstOrDefault(x => x.ID == employeeId);
+                    if (employee != null)
+                    {
+                        employee.IsActive = false;
+                        DeleteEmployeeDependents(dbContext, employeeId);
+                        if (dbContext.SaveChanges() > 0)
+                        {
+                            ret = new EmployeeDTO
+                            {
+                                FirstName = employee.FirstName,
+                                LastName = employee.LastName,
+                                CompanyId = employee.CompanyId,
+                                CreatedAt = employee.CreatedAt,
+                                ModifiedAt = employee.ModifiedAt
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Data Layer: GetEmployee Exception Msg", ex.Message);
+            }
+
+            return ret;
+        }
+
+        private void DeleteEmployeeDependents(ElevateEntities dbContext, int employeeId)
+        {
+            var dependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId);
+            foreach(var dependent in dependents)
+            {
+                dependent.IsActive = false;
+            }
+        }
+    }
+}

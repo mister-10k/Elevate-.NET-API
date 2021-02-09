@@ -5,16 +5,16 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="3deb53cbb3624e5987c2d1a36d66caf4" Name="Diagram1">
-        <EntityTypeShape EntityType="ElevateModel.Company" Width="1.5" PointX="0.75" PointY="2.5" />
-        <EntityTypeShape EntityType="ElevateModel.Employee" Width="1.5" PointX="3" PointY="4" />
-        <EntityTypeShape EntityType="ElevateModel.EmployeeDependent" Width="1.5" PointX="5.25" PointY="4" />
-        <EntityTypeShape EntityType="ElevateModel.Relationship" Width="1.5" PointX="3" PointY="8.125" />
-        <EntityTypeShape EntityType="ElevateModel.User" Width="1.5" PointX="3" PointY="1.125" />
+        <EntityTypeShape EntityType="ElevateModel.Company" Width="1.5" PointX="0.75" PointY="2.875" />
+        <EntityTypeShape EntityType="ElevateModel.Employee" Width="1.5" PointX="3" PointY="1.125" />
+        <EntityTypeShape EntityType="ElevateModel.Relationship" Width="1.5" PointX="3" PointY="8.375" />
+        <EntityTypeShape EntityType="ElevateModel.User" Width="1.5" PointX="3" PointY="4.625" />
         <AssociationConnector Association="ElevateModel.FK_Employee_CompanyId" />
         <AssociationConnector Association="ElevateModel.FK_User_CompanyId" />
+        <EntityTypeShape EntityType="ElevateModel.EmployeeDependent" Width="1.5" PointX="5.25" PointY="4.5" />
         <AssociationConnector Association="ElevateModel.FK_EmployeeDependent_EmployeeId" />
         <AssociationConnector Association="ElevateModel.FK_EmployeeDependent_RelationshipId" />
-      </Diagram>
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

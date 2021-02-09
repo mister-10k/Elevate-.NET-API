@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Elevate.Shared
 {
-    public interface IBenifitsPackageDL
+    public interface IUserBL
     {
+        string Test();
     }
 }
