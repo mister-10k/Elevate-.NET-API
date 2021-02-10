@@ -50,6 +50,13 @@ namespace Elevate.Controllers
         {
         }
 
+        [Route("api/employee/getebdashboardcardsdata/{companyId}")]
+        [HttpGet]
+        public EBDashbaordStatsDTO GetEBDashboardCardsData(int companyId)
+        {
+            return employeeBL.GetEBDashboardCardsData(companyId);
+        }
+
         private void FillEmployeeModel(EmployeeModel employeeModel, EmployeeDTO employeeDTO)
         {
 

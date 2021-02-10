@@ -88,13 +88,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Elevate.Entities\Elevate.Entities.csproj">
+      <Project>{4d09e969-09fb-40dd-b7cc-9f00982da6eb}</Project>
+      <Name>Elevate.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Elevate.Shared\Elevate.Shared.csproj">
       <Project>{4b8edf1d-3e00-4f15-9a70-a4421f80d70c}</Project>
       <Name>Elevate.Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Entities\Elevate.Entities.csproj">
-      <Project>{4d5701af-753c-4cf3-9c91-4f0db229b62f}</Project>
-      <Name>Elevate.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

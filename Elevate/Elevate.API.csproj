@@ -192,7 +192,6 @@
     </Compile>
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Models\EmployeeDependentModel.cs" />
-    <Compile Include="Models\PersonModel.cs" />
     <Compile Include="Models\EmployeeModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Entities
+namespace Elevate.Entities
 {
     using System;
     using System.Data.Entity;
@@ -26,9 +26,9 @@ namespace Entities
         }
     
         public virtual DbSet<Company> Companies { get; set; }
-        public virtual DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<EmployeeDependent> EmployeeDependents { get; set; }
         public virtual DbSet<Relationship> Relationships { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<EmployeeDependent> EmployeeDependents { get; set; }
+        public virtual DbSet<UserType> UserTypes { get; set; }
     }
 }

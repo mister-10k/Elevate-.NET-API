@@ -27,5 +27,10 @@ namespace Elevate.Shared
         /// <param name="employeeId">the id of the employee.</param>
         /// <returns>deleted employee info</returns>
         EmployeeDTO DeleteEmployee(int employeeId);
+
+        /// <summary>This method gets data for cards on employment benifits dashboard.</summary>
+        /// <param name="companyId">the id of company data should be retrieved for.</param>
+        /// <returns>the card data</returns>
+        EBDashbaordStatsDTO GetEBDashboardCardsData(int companyId);
     }
 }

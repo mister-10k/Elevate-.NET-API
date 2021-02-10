@@ -7,29 +7,23 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Entities
+namespace Elevate.Entities
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Employee
+    public partial class EmployeeDependent
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Employee()
-        {
-            this.EmployeeDependents = new HashSet<EmployeeDependent>();
-        }
-    
         public int ID { get; set; }
+        public int EmployeeId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public int CompanyId { get; set; }
+        public int RelationshipId { get; set; }
         public System.DateTime CreatedAt { get; set; }
         public Nullable<System.DateTime> ModifiedAt { get; set; }
         public bool IsActive { get; set; }
     
-        public virtual Company Company { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EmployeeDependent> EmployeeDependents { get; set; }
+        public virtual User User { get; set; }
+        public virtual Relationship Relationship { get; set; }
     }
 }

@@ -32,5 +32,45 @@ namespace Elevate.Business
         {
             return employeeDL.DeleteEmployee(id);
         }
+
+        public EBDashbaordStatsDTO GetEBDashboardCardsData(int companyId)
+        {
+            EBDashbaordStatsDTO ret = null;
+            try
+            {
+                ret = employeeDL.GetEBDashboardCardsData(companyId);
+                ret.NumberOfEmployees =  ret.Employees.Count;
+                ret.NumberOfEmployeeDependents = GetNumberOfDependentsForEmployee(ret.Employees);
+                ret.DeductionTotalPerYearTotal = GetTotalForYearDeductionsForEmployees(ret.Employees);
+                ret.DeductionPerMonthTotal = ret.DeductionTotalPerYearTotal / 12;
+                ret.DeductionBiWeeklyTotal = ret.DeductionTotalPerYearTotal / 26;
+                ret.Employees = null; // avoid large json load
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Business Layer: GetEBDashboardCardsData Exception Msg", ex.Message);
+            }
+            return ret;
+        }
+
+        private int GetNumberOfDependentsForEmployee(List<EmployeeDTO> employees)
+        {
+            var count = 0;
+            foreach (var employee in employees)
+            {
+                count += employee.Dependents.Count;
+            }
+            return count;
+        }
+
+        private double GetTotalForYearDeductionsForEmployees(List<EmployeeDTO> employees)
+        {
+            double total = 0.0;
+            foreach(var employee in employees)
+            {
+                total += EmployeeBenifitsUtility.GetEmployeeDeductionCost(employee);
+            }
+            return total;
+        }
     }
 }

@@ -1,5 +1,5 @@
-﻿using Elevate.Shared;
-using Entities;
+﻿using Elevate.Entities;
+using Elevate.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,28 +19,34 @@ namespace Elevate.Data
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
                     var createdAt = DateTime.Now;
-                    var newEmployee = new Employee
+                    var employeeUserType = dbContext.UserTypes.FirstOrDefault(x => x.Name == AppConstants.UserType.Employee);
+                    if (employeeUserType != null)
                     {
-                        FirstName = employeeDTO.FirstName,
-                        LastName = employeeDTO.LastName,
-                        CompanyId = employeeDTO.CompanyId,
-                        CreatedAt = createdAt,
-                        IsActive = true
-                    };
+                        var newEmployee = new User
+                        {
+                            FirstName = employeeDTO.FirstName,
+                            LastName = employeeDTO.LastName,
+                            Email = employeeDTO.Email,
+                            CompanyId = employeeDTO.CompanyId,
+                            UserTypeId = employeeUserType.ID,
+                            CreatedAt = createdAt,
+                            IsActive = true
+                        };
 
-                    dbContext.Employees.Add(newEmployee);
-                    var employeeSaved = dbContext.SaveChanges() > 0;
+                        dbContext.Users.Add(newEmployee);
+                        var employeeSaved = dbContext.SaveChanges() > 0;
 
-                    if (employeeSaved)
-                        AddEmployeeDependents(dbContext, employeeDTO.Dependents, newEmployee.ID);
+                        if (employeeSaved)
+                            AddEmployeeDependents(dbContext, employeeDTO.Dependents, newEmployee.ID);
 
-                    var dependentsSaved = employeeSaved;
+                        var dependentsSaved = employeeSaved;
 
-                    if (employeeSaved && (dbContext.SaveChanges() > 0 || employeeDTO.Dependents.Count == 0))
-                    {
-                        employeeDTO.Id = newEmployee.ID;
-                        employeeDTO.CreatedAt = createdAt;
-                        ret = employeeDTO;
+                        if (employeeSaved && (dbContext.SaveChanges() > 0 || employeeDTO.Dependents.Count == 0))
+                        {
+                            employeeDTO.Id = newEmployee.ID;
+                            employeeDTO.CreatedAt = createdAt;
+                            ret = employeeDTO;
+                        }
                     }
                     
                 }
@@ -79,7 +85,7 @@ namespace Elevate.Data
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
-                    var employee = dbContext.Employees.FirstOrDefault(x => x.ID == employeeId);
+                    var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId);
                     if (employee != null)
                     {
                         ret = new EmployeeDTO
@@ -135,7 +141,7 @@ namespace Elevate.Data
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
                     var modifiedAt = DateTime.Now;
-                    var employee = dbContext.Employees.FirstOrDefault(x => x.ID == employeeDTO.Id);
+                    var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeDTO.Id);
                     if (employee != null)
                     {
                         UpdateEmployeeDependents(dbContext, employeeDTO.Dependents, employeeDTO.Id);
@@ -215,7 +221,7 @@ namespace Elevate.Data
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
-                    var employee = dbContext.Employees.FirstOrDefault(x => x.ID == employeeId);
+                    var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId);
                     if (employee != null)
                     {
                         employee.IsActive = false;
@@ -249,6 +255,44 @@ namespace Elevate.Data
             {
                 dependent.IsActive = false;
             }
+        }
+
+        public EBDashbaordStatsDTO GetEBDashboardCardsData(int companyId)
+        {
+            var ret = new EBDashbaordStatsDTO();
+
+            try
+            {
+                using (ElevateEntities dbContext = new ElevateEntities())
+                {
+                    ret.Employees = new List<EmployeeDTO>();
+                    var employees = dbContext.Users.Where(x => x.CompanyId == companyId && x.UserType.Name == AppConstants.UserType.Employee);
+                    foreach(var employee in employees)
+                    {
+                        var employeeDTO = new EmployeeDTO
+                        {
+                            Id = employee.ID,
+                            FirstName = employee.FirstName,
+                            LastName = employee.LastName,
+                            Email = employee.Email,
+                            CompanyId = employee.CompanyId,
+                            CompanyName = employee.Company.Name,
+                            CompanyDisplayName = employee.Company.DisplayName,
+                            CreatedAt = employee.CreatedAt,
+                            ModifiedAt = employee.ModifiedAt,
+                            Dependents = new List<EmployeeDependentDTO>()                       
+                        };
+                        GetEmployeeDependents(dbContext, employeeDTO.Dependents, employee.ID);
+                        ret.Employees.Add(employeeDTO);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Data Layer: GetEmployee Exception Msg", ex.Message);
+            }
+
+            return ret;
         }
     }
 }

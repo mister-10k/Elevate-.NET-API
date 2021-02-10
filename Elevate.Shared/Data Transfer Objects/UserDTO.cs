@@ -5,8 +5,16 @@ using System.Web;
 
 namespace Elevate.Shared
 {
-    public class UserDTO : PersonDTO
+    public class UserDTO
     {
-        public string CompanyId { get; set; }
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public int CompanyId { get; set; }
+        public string CompanyName { get; set; }
+        public string CompanyDisplayName { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
     }
 }
