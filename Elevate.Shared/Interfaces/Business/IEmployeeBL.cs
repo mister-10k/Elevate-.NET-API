@@ -32,5 +32,10 @@ namespace Elevate.Shared
         /// <param name="companyId">the id of company data should be retrieved for.</param>
         /// <returns>the card data</returns>
         EBDashbaordStatsDTO GetEBDashboardCardsData(int companyId);
+
+        /// <summary>Gets list of employees for employee benifits dashboard</summary>
+        /// <param name="requestModel">Data for request</param>
+        /// <returns>Emloyees for table</returns>
+        List<EBEmployeeListDTO> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel);
     }
 }

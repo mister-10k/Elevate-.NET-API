@@ -72,5 +72,10 @@ namespace Elevate.Business
             }
             return total;
         }
+
+        public List<EBEmployeeListDTO> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
+        {
+            return employeeDL.GetEmployeesForEBDashboard(requestModel);
+        }
     }
 }

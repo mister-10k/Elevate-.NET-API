@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Unity;
 using Unity.Lifetime;
 using Unity.WebApi;
@@ -18,6 +19,11 @@ namespace Elevate
             var container = new UnityContainer();
             IOCRegistration.Register(container);
             config.DependencyResolver = new UnityDependencyResolver(container);
+
+            // cors
+            config.EnableCors();
+            var cors = new EnableCorsAttribute("*", "*", "*");
+            config.EnableCors(cors);
 
             // Web API routes
             config.MapHttpAttributeRoutes();

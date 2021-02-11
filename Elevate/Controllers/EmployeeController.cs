@@ -44,10 +44,11 @@ namespace Elevate.Controllers
         {
         }
 
-        // DELETE api/employee
+        [Route("api/employee/{employeeId}")]
         [HttpDelete]
-        public void Delete(int id)
+        public EmployeeDTO Delete(int employeeId)
         {
+            return employeeBL.DeleteEmployee(employeeId);
         }
 
         [Route("api/employee/getebdashboardcardsdata/{companyId}")]
@@ -84,6 +85,13 @@ namespace Elevate.Controllers
                 };
                 employeeModel.Dependents.Add(d);
             }
+        }
+
+        [Route("api/employee/GetEmployeesForEBDashboard")]
+        [HttpPost]
+        public List<EBEmployeeListDTO> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
+        {
+            return employeeBL.GetEmployeesForEBDashboard(requestModel);
         }
     }
 }

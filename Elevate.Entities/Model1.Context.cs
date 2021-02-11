@@ -12,6 +12,8 @@ namespace Elevate.Entities
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class ElevateEntities : DbContext
     {
@@ -30,5 +32,34 @@ namespace Elevate.Entities
         public virtual DbSet<Relationship> Relationships { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserType> UserTypes { get; set; }
+    
+        public virtual ObjectResult<GetEmployeesForEBDashboard_Result> GetEmployeesForEBDashboard(Nullable<int> companyId, string searchText, string sortBy, string sortColumn, Nullable<int> pageSize, Nullable<int> pageNumber)
+        {
+            var companyIdParameter = companyId.HasValue ?
+                new ObjectParameter("CompanyId", companyId) :
+                new ObjectParameter("CompanyId", typeof(int));
+    
+            var searchTextParameter = searchText != null ?
+                new ObjectParameter("SearchText", searchText) :
+                new ObjectParameter("SearchText", typeof(string));
+    
+            var sortByParameter = sortBy != null ?
+                new ObjectParameter("SortBy", sortBy) :
+                new ObjectParameter("SortBy", typeof(string));
+    
+            var sortColumnParameter = sortColumn != null ?
+                new ObjectParameter("SortColumn", sortColumn) :
+                new ObjectParameter("SortColumn", typeof(string));
+    
+            var pageSizeParameter = pageSize.HasValue ?
+                new ObjectParameter("PageSize", pageSize) :
+                new ObjectParameter("PageSize", typeof(int));
+    
+            var pageNumberParameter = pageNumber.HasValue ?
+                new ObjectParameter("PageNumber", pageNumber) :
+                new ObjectParameter("PageNumber", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEmployeesForEBDashboard_Result>("GetEmployeesForEBDashboard", companyIdParameter, searchTextParameter, sortByParameter, sortColumnParameter, pageSizeParameter, pageNumberParameter);
+        }
     }
 }

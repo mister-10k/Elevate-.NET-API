@@ -224,25 +224,26 @@ namespace Elevate.Data
                     var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId);
                     if (employee != null)
                     {
+                        ret = new EmployeeDTO { Dependents = new List<EmployeeDependentDTO>() };
+                        GetEmployeeDependents(dbContext, ret.Dependents, employeeId);
+
                         employee.IsActive = false;
                         DeleteEmployeeDependents(dbContext, employeeId);
+
                         if (dbContext.SaveChanges() > 0)
                         {
-                            ret = new EmployeeDTO
-                            {
-                                FirstName = employee.FirstName,
-                                LastName = employee.LastName,
-                                CompanyId = employee.CompanyId,
-                                CreatedAt = employee.CreatedAt,
-                                ModifiedAt = employee.ModifiedAt
-                            };
+                            ret.FirstName = employee.FirstName;
+                            ret.LastName = employee.LastName;
+                            ret.CompanyId = employee.CompanyId;
+                            ret.CreatedAt = employee.CreatedAt;
+                            ret.ModifiedAt = employee.ModifiedAt;
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Data Layer: GetEmployee Exception Msg", ex.Message);
+                Console.WriteLine("Data Layer: DeleteEmployee Exception Msg", ex.Message);
             }
 
             return ret;
@@ -289,7 +290,47 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Data Layer: GetEmployee Exception Msg", ex.Message);
+                Console.WriteLine("Data Layer: GetEBDashboardCardsData Exception Msg", ex.Message);
+            }
+
+            return ret;
+        }
+
+        public List<EBEmployeeListDTO> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
+        {
+            List<EBEmployeeListDTO> ret = null;
+
+            try
+            {
+                using (ElevateEntities dbContext = new ElevateEntities())
+                {
+                    var data = dbContext.GetEmployeesForEBDashboard(
+                        requestModel.CompanyId,
+                        requestModel.SearchText,
+                        requestModel.SortBy,
+                        requestModel.SortColumn,
+                        requestModel.PageSize,
+                        requestModel.PageNumber
+                    ).ToList();
+
+                    if (data.Count > 0)
+                    {
+                        ret = data.Select(employee => new EBEmployeeListDTO
+                        {
+                            Id = employee.Id,
+                            FirstName = employee.FirstName,
+                            LastName = employee.LastName,
+                            Company = employee.Company,
+                            Dependents = employee.Dependents ?? 0,
+                            CreatedAt = employee.CreatedAt,
+                            TotalCount = employee.TotalCount ?? 0
+                        }).ToList();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Data Layer: GetEmployeesForEBDashboard Exception Msg", ex.Message);
             }
 
             return ret;
