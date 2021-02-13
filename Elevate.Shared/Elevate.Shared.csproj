@@ -92,11 +92,13 @@
   <ItemGroup>
     <Compile Include="AppConstants.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
-    <Compile Include="Data Transfer Objects\EBEmployeeListDTO.cs" />
-    <Compile Include="Data Transfer Objects\EmployeeDependentDTO.cs" />
-    <Compile Include="Data Transfer Objects\EmployeeDTO.cs" />
-    <Compile Include="Data Transfer Objects\EBDashbaordStatsDTO.cs" />
-    <Compile Include="Data Transfer Objects\UserDTO.cs" />
+    <Compile Include="Data Transfer Objects\ListItem.cs" />
+    <Compile Include="Data Transfer Objects\EmployeeDependentModel.cs" />
+    <Compile Include="Data Transfer Objects\EmployeeModel.cs" />
+    <Compile Include="Data Transfer Objects\EBDashbaordStatsModel.cs" />
+    <Compile Include="Data Transfer Objects\TableModel.cs" />
+    <Compile Include="Data Transfer Objects\UserModel.cs" />
+    <Compile Include="Data Transfer Objects\EmployeeFormMasterModel.cs" />
     <Compile Include="Interfaces\Business\IUserBL.cs" />
     <Compile Include="Interfaces\Business\IEmployeeBL.cs" />
     <Compile Include="Interfaces\Data\IEmployeeDL.cs" />

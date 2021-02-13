@@ -10,9 +10,9 @@ namespace Elevate.Data
 {
     public class EmployeeDL : IEmployeeDL
     {
-        public EmployeeDTO CreateEmployee(EmployeeDTO employeeDTO)
+        public EmployeeModel CreateEmployee(EmployeeModel employee)
         {
-            EmployeeDTO ret = null;
+            EmployeeModel ret = null;
 
             try
             {
@@ -24,10 +24,10 @@ namespace Elevate.Data
                     {
                         var newEmployee = new User
                         {
-                            FirstName = employeeDTO.FirstName,
-                            LastName = employeeDTO.LastName,
-                            Email = employeeDTO.Email,
-                            CompanyId = employeeDTO.CompanyId,
+                            FirstName = employee.FirstName,
+                            LastName = employee.LastName,
+                            Email = employee.Email,
+                            CompanyId = employee.CompanyId,
                             UserTypeId = employeeUserType.ID,
                             CreatedAt = createdAt,
                             IsActive = true
@@ -37,15 +37,15 @@ namespace Elevate.Data
                         var employeeSaved = dbContext.SaveChanges() > 0;
 
                         if (employeeSaved)
-                            AddEmployeeDependents(dbContext, employeeDTO.Dependents, newEmployee.ID);
+                            AddEmployeeDependents(dbContext, employee.Dependents, newEmployee.ID);
+                        var depndentsSaved = dbContext.SaveChanges() > 0;
 
-                        var dependentsSaved = employeeSaved;
-
-                        if (employeeSaved && (dbContext.SaveChanges() > 0 || employeeDTO.Dependents.Count == 0))
+                        if (employeeSaved && (depndentsSaved || employee.Dependents.Count == 0))
                         {
-                            employeeDTO.Id = newEmployee.ID;
-                            employeeDTO.CreatedAt = createdAt;
-                            ret = employeeDTO;
+                            employee.Id = newEmployee.ID;
+                            employee.CreatedAt = createdAt;
+                            employee.CreatedAtText = employee.CreatedAt != null && employee.CreatedAt.HasValue ? employee.CreatedAt.Value.ToString("MM/dd/yyy") : string.Empty;
+                            ret = employee;
                         }
                     }
                     
@@ -59,7 +59,7 @@ namespace Elevate.Data
             return ret;
         }
 
-        private void AddEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentDTO> dependents, int employeeId)
+        private void AddEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentModel> dependents, int employeeId)
         {
             foreach (var dependent in dependents)
             {
@@ -77,9 +77,9 @@ namespace Elevate.Data
             }
         }
 
-        public EmployeeDTO GetEmployee(int employeeId)
+        public EmployeeModel GetEmployee(int employeeId)
         {
-            EmployeeDTO ret = null;
+            EmployeeModel ret = null;
 
             try
             {
@@ -88,7 +88,7 @@ namespace Elevate.Data
                     var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId);
                     if (employee != null)
                     {
-                        ret = new EmployeeDTO
+                        ret = new EmployeeModel
                         {
                             Id = employee.ID,
                             FirstName = employee.FirstName,
@@ -98,7 +98,7 @@ namespace Elevate.Data
                             CompanyId = employee.CompanyId,
                             CreatedAt = employee.CreatedAt,
                             ModifiedAt = employee.ModifiedAt,
-                            Dependents = new List<EmployeeDependentDTO>()
+                            Dependents = new List<EmployeeDependentModel>()
                         };
                         GetEmployeeDependents(dbContext, ret.Dependents, employeeId);
                     }
@@ -112,13 +112,13 @@ namespace Elevate.Data
             return ret;
         }
 
-        private void GetEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentDTO> dependents, int employeeId)
+        private void GetEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentModel> dependents, int employeeId)
         {
             var dbDependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId && x.IsActive);
 
             foreach(var dbDependent in dbDependents)
             {
-                var d = new EmployeeDependentDTO
+                var d = new EmployeeDependentModel
                 {
                     Id = dbDependent.ID,
                     EmployeeId = dbDependent.EmployeeId,
@@ -132,29 +132,29 @@ namespace Elevate.Data
             }
         }
 
-        public EmployeeDTO UpdateEmployee(EmployeeDTO employeeDTO)
+        public EmployeeModel UpdateEmployee(EmployeeModel employeeUpdateInfo)
         {
-            EmployeeDTO ret = null;
+            EmployeeModel ret = null;
 
             try
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
                     var modifiedAt = DateTime.Now;
-                    var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeDTO.Id);
-                    if (employee != null)
+                    var e = dbContext.Users.FirstOrDefault(x => x.ID == employeeUpdateInfo.Id);
+                    if (e != null)
                     {
-                        UpdateEmployeeDependents(dbContext, employeeDTO.Dependents, employeeDTO.Id);
-                        employee.FirstName = employeeDTO.FirstName;
-                        employee.LastName = employeeDTO.LastName;
-                        employee.CompanyId = employeeDTO.CompanyId;
-                        employee.ModifiedAt = modifiedAt;
+                        UpdateEmployeeDependents(dbContext, employeeUpdateInfo.Dependents, employeeUpdateInfo.Id);
+                        e.FirstName = employeeUpdateInfo.FirstName;
+                        e.LastName = employeeUpdateInfo.LastName;
+                        e.CompanyId = employeeUpdateInfo.CompanyId;
+                        e.ModifiedAt = modifiedAt;
                     }
 
                     if (dbContext.SaveChanges() > 0)
                     {
-                        employeeDTO.ModifiedAt = modifiedAt;
-                        ret = employeeDTO;
+                        e.ModifiedAt = modifiedAt;
+                        ret = employeeUpdateInfo;
                     }
 
                 }
@@ -167,7 +167,7 @@ namespace Elevate.Data
             return ret;
         }
 
-        private void UpdateEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentDTO> dependents, int employeeId)
+        private void UpdateEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentModel> dependents, int employeeId)
         {
             var dbDependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId && x.IsActive);
 
@@ -213,9 +213,9 @@ namespace Elevate.Data
             }
         }
 
-        public EmployeeDTO DeleteEmployee(int employeeId)
+        public EmployeeModel DeleteEmployee(int employeeId)
         {
-            EmployeeDTO ret = null;
+            EmployeeModel ret = null;
 
             try
             {
@@ -224,7 +224,7 @@ namespace Elevate.Data
                     var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId);
                     if (employee != null)
                     {
-                        ret = new EmployeeDTO { Dependents = new List<EmployeeDependentDTO>() };
+                        ret = new EmployeeModel { Dependents = new List<EmployeeDependentModel>() };
                         GetEmployeeDependents(dbContext, ret.Dependents, employeeId);
 
                         employee.IsActive = false;
@@ -258,19 +258,19 @@ namespace Elevate.Data
             }
         }
 
-        public EBDashbaordStatsDTO GetEBDashboardCardsData(int companyId)
+        public EBDashbaordStatsModel GetEBDashboardCardsData(int companyId)
         {
-            var ret = new EBDashbaordStatsDTO();
+            var ret = new EBDashbaordStatsModel();
 
             try
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
-                    ret.Employees = new List<EmployeeDTO>();
+                    ret.Employees = new List<EmployeeModel>();
                     var employees = dbContext.Users.Where(x => x.CompanyId == companyId && x.UserType.Name == AppConstants.UserType.Employee);
                     foreach(var employee in employees)
                     {
-                        var employeeDTO = new EmployeeDTO
+                        var EmployeeModel = new EmployeeModel
                         {
                             Id = employee.ID,
                             FirstName = employee.FirstName,
@@ -281,10 +281,10 @@ namespace Elevate.Data
                             CompanyDisplayName = employee.Company.DisplayName,
                             CreatedAt = employee.CreatedAt,
                             ModifiedAt = employee.ModifiedAt,
-                            Dependents = new List<EmployeeDependentDTO>()                       
+                            Dependents = new List<EmployeeDependentModel>()                       
                         };
-                        GetEmployeeDependents(dbContext, employeeDTO.Dependents, employee.ID);
-                        ret.Employees.Add(employeeDTO);
+                        GetEmployeeDependents(dbContext, EmployeeModel.Dependents, employee.ID);
+                        ret.Employees.Add(EmployeeModel);
                     }
                 }
             }
@@ -296,9 +296,9 @@ namespace Elevate.Data
             return ret;
         }
 
-        public List<EBEmployeeListDTO> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
+        public TableModel<EmployeeModel> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
         {
-            List<EBEmployeeListDTO> ret = null;
+            TableModel<EmployeeModel> ret = new TableModel<EmployeeModel> { Rows = new List<EmployeeModel>() };
 
             try
             {
@@ -315,16 +315,23 @@ namespace Elevate.Data
 
                     if (data.Count > 0)
                     {
-                        ret = data.Select(employee => new EBEmployeeListDTO
+                        var rows = data.Select(employee => new EmployeeModel
                         {
                             Id = employee.Id,
                             FirstName = employee.FirstName,
                             LastName = employee.LastName,
-                            Company = employee.Company,
-                            Dependents = employee.Dependents ?? 0,
-                            CreatedAt = employee.CreatedAt,
-                            TotalCount = employee.TotalCount ?? 0
+                            Email = employee.Email,
+                            CompanyId = employee.CompanyId,
+                            CompanyDisplayName = employee.CompanyDisplayName,
+                            NumberOfDependents = employee.NumberOfDependents ?? 0,
+                            Dependents = new List<EmployeeDependentModel>(),
+                            CreatedAtText = employee.CreatedAt
                         }).ToList();
+
+                        GetEmployeesDependents(dbContext, rows);
+
+                        ret.Rows = rows;
+                        ret.TotalCount = data[0].TotalCount ?? 0;
                     }
                 }
             }
@@ -334,6 +341,77 @@ namespace Elevate.Data
             }
 
             return ret;
+        }
+
+        private void GetEmployeesDependents(ElevateEntities dbContext, List<EmployeeModel> employees)
+        {
+            var employeeIds = employees.Select(x => x.Id).ToList();
+
+            var dependents = (from ED in dbContext.EmployeeDependents
+                              join employeeId in employeeIds on ED.EmployeeId equals employeeId
+                              join R in dbContext.Relationships on ED.RelationshipId equals R.ID
+                              where ED.IsActive
+                              select new EmployeeDependentModel
+                              {
+                                  Id = ED.ID,
+                                  EmployeeId = ED.EmployeeId,
+                                  FirstName = ED.FirstName,
+                                  LastName = ED.LastName,
+                                  RelationshipId = ED.RelationshipId,
+                                  RelationshipName = R.Name,
+                                  RelationshipDisplayName = R.DisplayName,
+                                  CreatedAt = ED.CreatedAt
+                              }).GroupBy(x =>x.EmployeeId).ToList();
+
+            foreach(var group in dependents)
+            {
+                var employee = employees.FirstOrDefault(x => x.Id == group.Key);
+                if (employee != null)
+                {
+                    employee.Dependents = group.ToList();
+                    foreach(var d in employee.Dependents)
+                    {
+                        d.CreatedAtText = d.CreatedAt != null && d.CreatedAt.HasValue ? d.CreatedAt.Value.ToString("MM/dd/yyy") : string.Empty;
+                    }
+                }
+            }
+        }
+
+        public EmployeeFormMasterDataModel GetEmployeeFormMasterData()
+        {
+            EmployeeFormMasterDataModel ret = null;
+
+            try
+            {
+                using (ElevateEntities dbContext = new ElevateEntities())
+                {
+                    ret = new EmployeeFormMasterDataModel
+                    {
+                        Relationships = GetRelationshipsForEmployeeForm(dbContext)
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Data Layer: GetEmployeeFormMasterData Exception Msg", ex.Message);
+            }
+
+            return ret;
+        }
+
+        private  List<ListItem> GetRelationshipsForEmployeeForm(ElevateEntities dbContext)
+        {
+            return (from R in dbContext.Relationships
+                    where R.IsActive
+                    select new
+                    {
+                        Value = R.ID,
+                        Text = R.DisplayName
+                    }).Select(x => new ListItem
+                    {
+                        Value = x.Value.ToString(),
+                        Text = x.Text
+                    }).ToList();
         }
     }
 }

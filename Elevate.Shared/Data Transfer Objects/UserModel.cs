@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Elevate.Models
+namespace Elevate.Shared
 {
     public class UserModel
     {
@@ -14,8 +14,9 @@ namespace Elevate.Models
         public int CompanyId { get; set; }
         public string CompanyName { get; set; }
         public string CompanyDisplayName { get; set; }
-        public string CreatedAt { get; set; }
-        public string ModifiedAt { get; set; }
-
+        public DateTime? CreatedAt { get; set; }
+        public string CreatedAtText { get; set; }
+        public DateTime? ModifiedAt { get; set; }
+        public string ModifiedAtText { get; set; }
     }
 }

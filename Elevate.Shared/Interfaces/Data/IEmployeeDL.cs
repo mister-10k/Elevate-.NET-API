@@ -9,33 +9,37 @@ namespace Elevate.Shared
     public interface IEmployeeDL
     {
         /// <summary>This method creates a new employee.</summary>
-        /// <param name="employeeDTO">info for new employee</param>
+        /// <param name="employeeModel">info for new employee</param>
         /// <returns>created employee info</returns>
-        EmployeeDTO CreateEmployee(EmployeeDTO employeeDTO);
+        EmployeeModel CreateEmployee(EmployeeModel employeeModel);
 
         /// <summary>This method gets info of an employee.</summary>
         /// <param name="employeeId">the id of the employee.</param>
         /// <returns>employee info</returns>
-        EmployeeDTO GetEmployee(int employeeId);
+        EmployeeModel GetEmployee(int employeeId);
 
         /// <summary>This method updates a new employee.</summary>
-        /// <param name="employeeDTO">info for employee to update</param>
+        /// <param name="employeeModel">info for employee to update</param>
         /// <returns>updated employee info</returns>
-        EmployeeDTO UpdateEmployee(EmployeeDTO employeeDTO);
+        EmployeeModel UpdateEmployee(EmployeeModel employeeModel);
 
         /// <summary>This method creates a new employee.</summary>
         /// <param name="employeeId">the id of the employee.</param>
         /// <returns>deleted employee info</returns>
-        EmployeeDTO DeleteEmployee(int employeeId);
+        EmployeeModel DeleteEmployee(int employeeId);
 
         /// <summary>This method gets data for cards on employment benifits dashboard.</summary>
         /// <param name="companyId">the id of company data should be retrieved for.</param>
         /// <returns>the card data</returns>
-        EBDashbaordStatsDTO GetEBDashboardCardsData(int companyId);
+        EBDashbaordStatsModel GetEBDashboardCardsData(int companyId);
 
         /// <summary>Gets list of employees for employee benifits dashboard</summary>
         /// <param name="requestModel">Data for request</param>
         /// <returns>Emloyees for table</returns>
-        List<EBEmployeeListDTO> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel);
+        TableModel<EmployeeModel> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel);
+
+        /// <summary>Gets master data form employee form</summary>
+        /// <returns>employee form master data</returns>
+        EmployeeFormMasterDataModel GetEmployeeFormMasterData();
     }
 }

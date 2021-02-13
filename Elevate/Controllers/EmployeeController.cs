@@ -1,5 +1,4 @@
-﻿using Elevate.Models;
-using Elevate.Shared;
+﻿using Elevate.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +17,9 @@ namespace Elevate.Controllers
 
         // POST api/employee
         [HttpPost]
-        public void Post([FromBody] EmployeeModel employeeModel)
+        public EmployeeModel Post(EmployeeModel employee)
         {
+            return this.employeeBL.CreateEmployee(employee);
         }
 
         // POST api/employee/id
@@ -28,12 +28,12 @@ namespace Elevate.Controllers
         {
             EmployeeModel employeeModel = null;
 
-            var result = employeeBL.GetEmployee(id);
-            if (result != null)
-            {
-                employeeModel = new EmployeeModel { };
-                FillEmployeeModel(employeeModel, result);
-            }
+            //var result = employeeBL.GetEmployee(id);
+            //if (result != null)
+            //{
+            //    employeeModel = new EmployeeModel { };
+            //    FillEmployeeModel(employeeModel, result);
+            //}
 
             return employeeModel;
         }
@@ -46,52 +46,59 @@ namespace Elevate.Controllers
 
         [Route("api/employee/{employeeId}")]
         [HttpDelete]
-        public EmployeeDTO Delete(int employeeId)
+        public EmployeeModel Delete(int employeeId)
         {
             return employeeBL.DeleteEmployee(employeeId);
         }
 
         [Route("api/employee/getebdashboardcardsdata/{companyId}")]
         [HttpGet]
-        public EBDashbaordStatsDTO GetEBDashboardCardsData(int companyId)
+        public EBDashbaordStatsModel GetEBDashboardCardsData(int companyId)
         {
             return employeeBL.GetEBDashboardCardsData(companyId);
         }
 
-        private void FillEmployeeModel(EmployeeModel employeeModel, EmployeeDTO employeeDTO)
-        {
+        //private void FillEmployeeModel(EmployeeModel employeeModel, EmployeeModel employee)
+        //{
 
-            employeeModel.FirstName = employeeDTO.FirstName;
-            employeeModel.LastName = employeeDTO.LastName;
-            employeeModel.CompanyId = employeeDTO.CompanyId;
-            employeeModel.CompanyName = employeeDTO.CompanyName;
-            employeeModel.CompanyDisplayName = employeeDTO.CompanyDisplayName;
-            employeeModel.CreatedAt = employeeDTO.CreatedAt != null && employeeDTO.CreatedAt.HasValue ? employeeDTO.CreatedAt.Value.ToString("MM/dd/yyyy") : string.Empty;
-            employeeModel.ModifiedAt = employeeDTO.ModifiedAt != null && employeeDTO.ModifiedAt.HasValue ? employeeDTO.ModifiedAt.Value.ToString("MM/dd/yyyy") : string.Empty;
-            employeeModel.Dependents = new List<EmployeeDependentModel>();
+        //    employee.FirstName = employee.FirstName;
+        //    employee.LastName = employee.LastName;
+        //    employee.CompanyId = employee.CompanyId;
+        //    employee.CompanyName = employee.CompanyName;
+        //    employee.CompanyDisplayName = employee.CompanyDisplayName;
+        //    employee.CreatedAt = employee.CreatedAtText != null && employee.CreatedAt.HasValue ? employee.CreatedAt.Value.ToString("MM/dd/yyyy") : string.Empty;
+        //    employee.ModifiedAt = employee.ModifiedAt != null && employee.ModifiedAt.HasValue ? employee.ModifiedAt.Value.ToString("MM/dd/yyyy") : string.Empty;
+        //    employee.Dependents = new List<EmployeeDependentModel>();
             
 
-            foreach(var dependent in employeeDTO.Dependents)
-            {
-                var d = new EmployeeDependentModel
-                {
-                    Id = dependent.Id,
-                    EmployeeId = dependent.EmployeeId,
-                    FirstName = dependent.FirstName,
-                    LastName = dependent.LastName,
-                    RelationshipId = dependent.RelationshipId,
-                    CreatedAt = dependent.CreatedAt.HasValue ? dependent.CreatedAt.Value.ToString("MM/dd/yyyy") : string.Empty,
-                    ModifiedAt = dependent.ModifiedAt.HasValue ? dependent.ModifiedAt.Value.ToString("MM/dd/yyyy") : string.Empty,
-                };
-                employeeModel.Dependents.Add(d);
-            }
-        }
+        //    foreach(var dependent in employeeModel.Dependents)
+        //    {
+        //        var d = new EmployeeDependentModel
+        //        {
+        //            Id = dependent.Id,
+        //            EmployeeId = dependent.EmployeeId,
+        //            FirstName = dependent.FirstName,
+        //            LastName = dependent.LastName,
+        //            RelationshipId = dependent.RelationshipId,
+        //            CreatedAt = dependent.CreatedAt.HasValue ? dependent.CreatedAt.Value.ToString("MM/dd/yyyy") : string.Empty,
+        //            ModifiedAt = dependent.ModifiedAt.HasValue ? dependent.ModifiedAt.Value.ToString("MM/dd/yyyy") : string.Empty,
+        //        };
+        //        employeeModel.Dependents.Add(d);
+        //    }
+        //}
 
         [Route("api/employee/GetEmployeesForEBDashboard")]
         [HttpPost]
-        public List<EBEmployeeListDTO> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
+        public TableModel<EmployeeModel> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
         {
             return employeeBL.GetEmployeesForEBDashboard(requestModel);
+        }
+
+        [Route("api/employee/GetEmployeeFormMasterData")]
+        [HttpGet]
+        public EmployeeFormMasterDataModel GetEmployeeFormMasterData()
+        {
+            return employeeBL.GetEmployeeFormMasterData();
         }
     }
 }

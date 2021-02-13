@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Elevate.Shared
 {
-    public class EBDashbaordStatsDTO
+    public class EBDashbaordStatsModel
     {
-        public List<EmployeeDTO> Employees { get; set; }
+        public List<EmployeeModel> Employees { get; set; }
         public int NumberOfEmployees { get; set; }
         public int NumberOfEmployeeDependents { get; set; }
         public double DeductionBiWeeklyTotal { get; set; }

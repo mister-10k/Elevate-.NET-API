@@ -48,7 +48,7 @@
           <Property Name="FirstName" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="LastName" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="Email" Type="varchar" MaxLength="300" Nullable="false" />
-          <Property Name="Password" Type="varchar" MaxLength="300" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="300" />
           <Property Name="UserTypeId" Type="int" Nullable="false" />
           <Property Name="CompanyId" Type="int" Nullable="false" />
           <Property Name="CreatedAt" Type="datetime" Nullable="false" />
@@ -196,7 +196,7 @@
           <Property Name="FirstName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="LastName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Email" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Password" Type="String" MaxLength="300" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
           <Property Name="UserTypeId" Type="Int32" Nullable="false" />
           <Property Name="CompanyId" Type="Int32" Nullable="false" />
           <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
@@ -301,8 +301,11 @@
           <Property Type="Int32" Name="Id" Nullable="false" />
           <Property Type="String" Name="FirstName" Nullable="false" MaxLength="255" />
           <Property Type="String" Name="LastName" Nullable="false" MaxLength="255" />
-          <Property Type="String" Name="Company" Nullable="false" MaxLength="500" />
-          <Property Type="Int32" Name="Dependents" Nullable="true" />
+          <Property Type="String" Name="Email" Nullable="false" MaxLength="300" />
+          <Property Type="Int32" Name="CompanyId" Nullable="false" />
+          <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="500" />
+          <Property Type="String" Name="CompanyDisplayName" Nullable="false" MaxLength="500" />
+          <Property Type="Int32" Name="NumberOfDependents" Nullable="true" />
           <Property Type="String" Name="CreatedAt" Nullable="true" MaxLength="10" />
           <Property Type="Int32" Name="TotalCount" Nullable="true" />
         </ComplexType>
@@ -384,8 +387,11 @@
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="Dependents" ColumnName="Dependents" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="CompanyId" ColumnName="CompanyId" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="CompanyDisplayName" ColumnName="CompanyDisplayName" />
+                <ScalarProperty Name="NumberOfDependents" ColumnName="NumberOfDependents" />
                 <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="TotalCount" ColumnName="TotalCount" />
               </ComplexTypeMapping>

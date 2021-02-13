@@ -14,28 +14,28 @@ namespace Elevate.Business
         {
             this.employeeDL = employeeDL;
         }
-        public EmployeeDTO CreateEmployee(EmployeeDTO employeeDTO)
+        public EmployeeModel CreateEmployee(EmployeeModel employee)
         {
-            return employeeDL.CreateEmployee(employeeDTO);
+            return employeeDL.CreateEmployee(employee);
         }
-        public EmployeeDTO GetEmployee(int id)
+        public EmployeeModel GetEmployee(int id)
         {
             return employeeDL.GetEmployee(id);
         }
 
-        public EmployeeDTO UpdateEmployee(EmployeeDTO employeeDTO)
+        public EmployeeModel UpdateEmployee(EmployeeModel employee)
         {
-            return employeeDL.UpdateEmployee(employeeDTO);
+            return employeeDL.UpdateEmployee(employee);
         }
 
-        public EmployeeDTO DeleteEmployee(int id)
+        public EmployeeModel DeleteEmployee(int id)
         {
             return employeeDL.DeleteEmployee(id);
         }
 
-        public EBDashbaordStatsDTO GetEBDashboardCardsData(int companyId)
+        public EBDashbaordStatsModel GetEBDashboardCardsData(int companyId)
         {
-            EBDashbaordStatsDTO ret = null;
+            EBDashbaordStatsModel ret = null;
             try
             {
                 ret = employeeDL.GetEBDashboardCardsData(companyId);
@@ -53,7 +53,7 @@ namespace Elevate.Business
             return ret;
         }
 
-        private int GetNumberOfDependentsForEmployee(List<EmployeeDTO> employees)
+        private int GetNumberOfDependentsForEmployee(List<EmployeeModel> employees)
         {
             var count = 0;
             foreach (var employee in employees)
@@ -63,7 +63,7 @@ namespace Elevate.Business
             return count;
         }
 
-        private double GetTotalForYearDeductionsForEmployees(List<EmployeeDTO> employees)
+        private double GetTotalForYearDeductionsForEmployees(List<EmployeeModel> employees)
         {
             double total = 0.0;
             foreach(var employee in employees)
@@ -73,9 +73,14 @@ namespace Elevate.Business
             return total;
         }
 
-        public List<EBEmployeeListDTO> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
+        public TableModel<EmployeeModel> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
         {
             return employeeDL.GetEmployeesForEBDashboard(requestModel);
+        }
+
+        public EmployeeFormMasterDataModel GetEmployeeFormMasterData()
+        {
+            return employeeDL.GetEmployeeFormMasterData();
         }
     }
 }

@@ -5,8 +5,9 @@ using System.Web;
 
 namespace Elevate.Shared
 {
-    public class EmployeeDTO : UserDTO
+    public class TableModel <T>
     {
-        public List<EmployeeDependentDTO> Dependents { get; set; }
+        public List<T> Rows { get; set; }
+        public int TotalCount { get; set; }
     }
 }
