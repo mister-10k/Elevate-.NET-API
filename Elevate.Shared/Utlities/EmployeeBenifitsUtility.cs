@@ -28,7 +28,7 @@ namespace Elevate.Shared
                 total += dependentCost;
             }
 
-            return total;
+            return Math.Round(total,2);
         }
     }
 }

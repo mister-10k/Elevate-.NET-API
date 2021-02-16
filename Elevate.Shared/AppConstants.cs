@@ -22,5 +22,10 @@ namespace Elevate.Shared
             public const int CostOfDependent = 500;
             public const double NameStartsWithADiscount = 0.1;
         }
+
+        public struct AppColors
+        {
+            public const string main = "#F03A17";
+        }
     }
 }

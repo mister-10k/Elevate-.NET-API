@@ -41,5 +41,9 @@ namespace Elevate.Shared
         /// <summary>Gets master data form employee form</summary>
         /// <returns>employee form master data</returns>
         EmployeeFormMasterDataModel GetEmployeeFormMasterData();
+
+        /// <summary>Gets Top 10 Employees with highest deductions</summary>
+        /// <returns>Top 10 employees with highest deductions</returns>
+        PrimeNGBarChartModel GetTop10HighestEmployeeDedcutions();
     }
 }

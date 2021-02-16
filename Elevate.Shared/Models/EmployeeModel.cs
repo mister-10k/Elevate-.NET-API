@@ -9,5 +9,6 @@ namespace Elevate.Shared
     {
         public int NumberOfDependents { get; set; }
         public List<EmployeeDependentModel> Dependents { get; set; }
+        public double TotalDeduction { get; set; }
     }
 }

@@ -40,8 +40,9 @@ namespace Elevate.Controllers
 
         // PUT api/employee
         [HttpPut]
-        public void Put([FromBody] EmployeeModel employeeModel)
+        public EmployeeModel Put(EmployeeModel employee)
         {
+            return this.employeeBL.UpdateEmployee(employee);
         }
 
         [Route("api/employee/{employeeId}")]
@@ -99,6 +100,13 @@ namespace Elevate.Controllers
         public EmployeeFormMasterDataModel GetEmployeeFormMasterData()
         {
             return employeeBL.GetEmployeeFormMasterData();
+        }
+
+        [Route("api/employee/GetTop10HighestEmployeeDedcutions")]
+        [HttpGet]
+        public PrimeNGBarChartModel GetTop10HighestEmployeeDedcutions()
+        {
+            return employeeBL.GetTop10HighestEmployeeDedcutions();
         }
     }
 }

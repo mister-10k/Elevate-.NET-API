@@ -82,5 +82,39 @@ namespace Elevate.Business
         {
             return employeeDL.GetEmployeeFormMasterData();
         }
+
+        public PrimeNGBarChartModel GetTop10HighestEmployeeDedcutions()
+        {
+            var ret = new PrimeNGBarChartModel();
+
+            var employees = employeeDL.GetAllEmployees();
+
+            if (employees != null)
+            {
+                foreach (var employee in employees)
+                {
+                    employee.TotalDeduction = EmployeeBenifitsUtility.GetEmployeeDeductionCost(employee);
+                }
+
+                employees = employees.OrderByDescending(x => x.TotalDeduction).ToList();
+
+                employees = employees.Take(10).ToList();
+
+
+                ret.labels = employees.Select(x => x.FirstName + " " + x.LastName).ToList();
+
+                var dataset = new PrimeNGBarChartDataSetModel
+                {
+                    label = "Highest Employee Deductions",
+                    backgroundColor = AppConstants.AppColors.main,
+                    borderColor = "#1E88E5",
+                    data = employees.Select(x => x.TotalDeduction).ToList()
+                };
+                ret.datasets = new List<PrimeNGBarChartDataSetModel> { dataset };
+            }
+
+            return ret;
+            
+        }
     }
 }

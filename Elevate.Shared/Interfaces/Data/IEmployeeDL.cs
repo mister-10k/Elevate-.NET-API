@@ -18,6 +18,10 @@ namespace Elevate.Shared
         /// <returns>employee info</returns>
         EmployeeModel GetEmployee(int employeeId);
 
+        /// <summary>This method gets all employees.</summary>
+        /// <returns>all employees</returns>
+        List<EmployeeModel> GetAllEmployees();
+
         /// <summary>This method updates a new employee.</summary>
         /// <param name="employeeModel">info for employee to update</param>
         /// <returns>updated employee info</returns>

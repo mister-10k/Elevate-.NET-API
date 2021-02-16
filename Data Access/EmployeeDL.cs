@@ -112,6 +112,49 @@ namespace Elevate.Data
             return ret;
         }
 
+        public List<EmployeeModel> GetAllEmployees()
+        {
+            List<EmployeeModel> ret = null;
+
+            try
+            {
+                using (ElevateEntities dbContext = new ElevateEntities())
+                {
+
+                    var employeeUserType = dbContext.UserTypes.FirstOrDefault(x => x.Name == AppConstants.UserType.Employee);
+                    if (employeeUserType != null)
+                    {
+                        ret = (from U in dbContext.Users
+                               where U.IsActive == true && U.UserTypeId == employeeUserType.ID
+                               select new EmployeeModel
+                               {
+                                   FirstName = U.FirstName,
+                                   LastName = U.LastName,
+                                   Email = U.Email,
+                                   CompanyId = U.CompanyId,
+                                   CreatedAt = U.CreatedAt,
+                                   Dependents = U.EmployeeDependents.Select(x => new EmployeeDependentModel
+                                   {
+                                       Id = x.ID,
+                                       EmployeeId = x.EmployeeId,
+                                       FirstName = x.FirstName,
+                                       LastName = x.LastName,
+                                       RelationshipId = x.RelationshipId,
+                                       CreatedAt = x.CreatedAt,
+                                       ModifiedAt = x.ModifiedAt
+                                   }).ToList()
+                               }).ToList();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Data Layer: GetAllEmployees Exception Msg", ex.Message);
+            }
+
+            return ret;
+        }
+
         private void GetEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentModel> dependents, int employeeId)
         {
             var dbDependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId && x.IsActive);
@@ -147,13 +190,14 @@ namespace Elevate.Data
                         UpdateEmployeeDependents(dbContext, employeeUpdateInfo.Dependents, employeeUpdateInfo.Id);
                         e.FirstName = employeeUpdateInfo.FirstName;
                         e.LastName = employeeUpdateInfo.LastName;
-                        e.CompanyId = employeeUpdateInfo.CompanyId;
+                        e.Email = employeeUpdateInfo.Email;
                         e.ModifiedAt = modifiedAt;
                     }
 
                     if (dbContext.SaveChanges() > 0)
                     {
-                        e.ModifiedAt = modifiedAt;
+                        employeeUpdateInfo.ModifiedAt = modifiedAt;
+                        employeeUpdateInfo.ModifiedAtText = modifiedAt.ToString("MM/dd/yyy");
                         ret = employeeUpdateInfo;
                     }
 
