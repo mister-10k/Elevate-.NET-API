@@ -31,7 +31,7 @@ namespace Elevate.Shared
         /// <summary>This method gets data for cards on employment benifits dashboard.</summary>
         /// <param name="companyId">the id of company data should be retrieved for.</param>
         /// <returns>the card data</returns>
-        EBDashbaordStatsModel GetEBDashboardCardsData(int companyId);
+        List<EBDashbaordStatsCardModel> GetEBDashboardCardsData(int companyId);
 
         /// <summary>Gets list of employees for employee benifits dashboard</summary>
         /// <param name="requestModel">Data for request</param>
@@ -44,6 +44,6 @@ namespace Elevate.Shared
 
         /// <summary>Gets Top 10 Employees with highest deductions</summary>
         /// <returns>Top 10 employees with highest deductions</returns>
-        PrimeNGBarChartModel GetTop10HighestEmployeeDedcutions();
+        PrimeNGBarChartModel GetTop10HighestEmployeeDedcutions(int companyId);
     }
 }

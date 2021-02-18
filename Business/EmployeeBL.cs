@@ -33,18 +33,48 @@ namespace Elevate.Business
             return employeeDL.DeleteEmployee(id);
         }
 
-        public EBDashbaordStatsModel GetEBDashboardCardsData(int companyId)
+        public List<EBDashbaordStatsCardModel> GetEBDashboardCardsData(int companyId)
         {
-            EBDashbaordStatsModel ret = null;
+            List<EBDashbaordStatsCardModel> ret = null;
             try
             {
-                ret = employeeDL.GetEBDashboardCardsData(companyId);
-                ret.NumberOfEmployees =  ret.Employees.Count;
-                ret.NumberOfEmployeeDependents = GetNumberOfDependentsForEmployee(ret.Employees);
-                ret.DeductionTotalPerYearTotal = GetTotalForYearDeductionsForEmployees(ret.Employees);
-                ret.DeductionPerMonthTotal = ret.DeductionTotalPerYearTotal / 12;
-                ret.DeductionBiWeeklyTotal = ret.DeductionTotalPerYearTotal / 26;
-                ret.Employees = null; // avoid large json load
+                ret = new List<EBDashbaordStatsCardModel>();
+                var employees = employeeDL.GetAllEmployeesForComapny(companyId);
+                ret.Add(new EBDashbaordStatsCardModel
+                {
+                    Title = AppConstants.StatCardTitle.MyEmployees,
+                    Number = employees.Count,
+                    Color = AppConstants.AppColor.Primary
+                });
+                ret.Add(new EBDashbaordStatsCardModel
+                {
+                    Title = AppConstants.StatCardTitle.EmployeeDependents,
+                    Number = GetNumberOfDependentsForEmployees(employees),
+                    Color = AppConstants.AppColor.Secondary
+                });
+                var totalYearDeductions = GetTotalForYearDeductionsForEmployees(employees);
+                ret.Add(new EBDashbaordStatsCardModel
+                {
+                    Title = AppConstants.StatCardTitle.DeductionBiWeeklyTotal,
+                    Number = totalYearDeductions/26,
+                    Color = AppConstants.AppColor.Tertiary,
+                    IsCurrency = true
+                });
+                ret.Add(new EBDashbaordStatsCardModel
+                {
+                    Title = AppConstants.StatCardTitle.DeductionPerMonthTotal,
+                    Number = totalYearDeductions / 12,
+                    Color = AppConstants.AppColor.Tertiary,
+                    IsCurrency = true
+                });
+                ret.Add(new EBDashbaordStatsCardModel
+                {
+                    Title = AppConstants.StatCardTitle.DeductionPerMonthTotal,
+                    Number = totalYearDeductions,
+                    Color = AppConstants.AppColor.Tertiary,
+                    IsCurrency = true
+                });
+
             }
             catch (Exception ex)
             {
@@ -53,7 +83,7 @@ namespace Elevate.Business
             return ret;
         }
 
-        private int GetNumberOfDependentsForEmployee(List<EmployeeModel> employees)
+        private int GetNumberOfDependentsForEmployees(List<EmployeeModel> employees)
         {
             var count = 0;
             foreach (var employee in employees)
@@ -83,11 +113,11 @@ namespace Elevate.Business
             return employeeDL.GetEmployeeFormMasterData();
         }
 
-        public PrimeNGBarChartModel GetTop10HighestEmployeeDedcutions()
+        public PrimeNGBarChartModel GetTop10HighestEmployeeDedcutions(int companyId)
         {
             var ret = new PrimeNGBarChartModel();
 
-            var employees = employeeDL.GetAllEmployees();
+            var employees = employeeDL.GetAllEmployeesForComapny(companyId);
 
             if (employees != null)
             {
@@ -106,7 +136,7 @@ namespace Elevate.Business
                 var dataset = new PrimeNGBarChartDataSetModel
                 {
                     label = "Highest Employee Deductions",
-                    backgroundColor = AppConstants.AppColors.main,
+                    backgroundColor = AppConstants.AppColor.Primary,
                     borderColor = "#1E88E5",
                     data = employees.Select(x => x.TotalDeduction).ToList()
                 };

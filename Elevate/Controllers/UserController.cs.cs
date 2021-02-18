@@ -16,24 +16,49 @@ namespace Elevate.Controllers
             this.userBL = userBL;
         }
 
-        public string Get(int id)
+        [Route("api/user/login")]
+        [AllowAnonymous]
+        [HttpPost]
+        public HttpResponseMessage Login(UserModel userModel)
         {
-            return userBL.Test();
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+
+            var user = userBL.GetUser(userModel.Email, userModel.Password);
+            if (user != null)
+            {
+                response = Request.CreateResponse(HttpStatusCode.OK, TokenManager.GenerateToken(user.Email, user.CompanyId));
+            }
+
+            return response;
         }
 
-        // POST api/values
-        public void Post([FromBody] string value)
+        [Route("api/user/GetSignUpMasterData")]
+        [AllowAnonymous]
+        [HttpGet]
+        public SignUpMasterDataModel GetSignUpMasterData()
         {
+            return userBL.GetSignUpMasterData();
         }
 
-        // PUT api/values/5
-        public void Put(int id, [FromBody] string value)
+        [Route("api/user/UserAlreadyHasEmail")]
+        [HttpPost]
+        public bool UserAlreadyHasEmail(UserModel user)
         {
+            return userBL.UserAlreadyHasEmail(user.Email);
         }
 
-        // DELETE api/values/5
-        public void Delete(int id)
+        [Route("api/user/SignUp")]
+        [HttpPost]
+        public string SignUp(UserModel userModel)
         {
+            string token = null;
+            var user = userBL.CreateUser(userModel);
+            if (user != null)
+            {
+                token = TokenManager.GenerateToken(user.Email, user.CompanyId);
+            }
+
+            return token;
         }
     }
 }

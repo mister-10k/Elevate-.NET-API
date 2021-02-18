@@ -15,30 +15,19 @@ namespace Elevate.Controllers
             this.employeeBL = employeeBL;
         }
 
-        // POST api/employee
         [HttpPost]
         public EmployeeModel Post(EmployeeModel employee)
         {
             return this.employeeBL.CreateEmployee(employee);
         }
 
-        // POST api/employee/id
         [HttpGet]
-        public EmployeeModel Get(int id)
+        public EmployeeModel Get(int employeeId)
         {
-            EmployeeModel employeeModel = null;
-
-            //var result = employeeBL.GetEmployee(id);
-            //if (result != null)
-            //{
-            //    employeeModel = new EmployeeModel { };
-            //    FillEmployeeModel(employeeModel, result);
-            //}
-
-            return employeeModel;
+            return employeeBL.GetEmployee(employeeId);
         }
 
-        // PUT api/employee
+        [Route("api/employee/{employeeId}")]
         [HttpPut]
         public EmployeeModel Put(EmployeeModel employee)
         {
@@ -54,59 +43,30 @@ namespace Elevate.Controllers
 
         [Route("api/employee/getebdashboardcardsdata/{companyId}")]
         [HttpGet]
-        public EBDashbaordStatsModel GetEBDashboardCardsData(int companyId)
+        public List<EBDashbaordStatsCardModel> GetEBDashboardCardsData(int companyId)
         {
             return employeeBL.GetEBDashboardCardsData(companyId);
         }
 
-        //private void FillEmployeeModel(EmployeeModel employeeModel, EmployeeModel employee)
-        //{
-
-        //    employee.FirstName = employee.FirstName;
-        //    employee.LastName = employee.LastName;
-        //    employee.CompanyId = employee.CompanyId;
-        //    employee.CompanyName = employee.CompanyName;
-        //    employee.CompanyDisplayName = employee.CompanyDisplayName;
-        //    employee.CreatedAt = employee.CreatedAtText != null && employee.CreatedAt.HasValue ? employee.CreatedAt.Value.ToString("MM/dd/yyyy") : string.Empty;
-        //    employee.ModifiedAt = employee.ModifiedAt != null && employee.ModifiedAt.HasValue ? employee.ModifiedAt.Value.ToString("MM/dd/yyyy") : string.Empty;
-        //    employee.Dependents = new List<EmployeeDependentModel>();
-            
-
-        //    foreach(var dependent in employeeModel.Dependents)
-        //    {
-        //        var d = new EmployeeDependentModel
-        //        {
-        //            Id = dependent.Id,
-        //            EmployeeId = dependent.EmployeeId,
-        //            FirstName = dependent.FirstName,
-        //            LastName = dependent.LastName,
-        //            RelationshipId = dependent.RelationshipId,
-        //            CreatedAt = dependent.CreatedAt.HasValue ? dependent.CreatedAt.Value.ToString("MM/dd/yyyy") : string.Empty,
-        //            ModifiedAt = dependent.ModifiedAt.HasValue ? dependent.ModifiedAt.Value.ToString("MM/dd/yyyy") : string.Empty,
-        //        };
-        //        employeeModel.Dependents.Add(d);
-        //    }
-        //}
-
-        [Route("api/employee/GetEmployeesForEBDashboard")]
+        [Route("api/employee/getEmployeesForEBDashboard")]
         [HttpPost]
         public TableModel<EmployeeModel> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
         {
             return employeeBL.GetEmployeesForEBDashboard(requestModel);
         }
 
-        [Route("api/employee/GetEmployeeFormMasterData")]
+        [Route("api/employee/getEmployeeFormMasterData")]
         [HttpGet]
         public EmployeeFormMasterDataModel GetEmployeeFormMasterData()
         {
             return employeeBL.GetEmployeeFormMasterData();
         }
 
-        [Route("api/employee/GetTop10HighestEmployeeDedcutions")]
+        [Route("api/employee/getTop10HighestEmployeeDedcutions/{companyId}")]
         [HttpGet]
-        public PrimeNGBarChartModel GetTop10HighestEmployeeDedcutions()
+        public PrimeNGBarChartModel GetTop10HighestEmployeeDedcutions(int companyId)
         {
-            return employeeBL.GetTop10HighestEmployeeDedcutions();
+            return employeeBL.GetTop10HighestEmployeeDedcutions(companyId);
         }
     }
 }

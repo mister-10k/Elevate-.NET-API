@@ -23,9 +23,20 @@ namespace Elevate.Shared
             public const double NameStartsWithADiscount = 0.1;
         }
 
-        public struct AppColors
+        public struct AppColor
         {
-            public const string main = "#F03A17";
+            public const string Primary = "#F03A17";
+            public const string Secondary = "#007bff";
+            public const string Tertiary = "grey";
+        }
+
+        public struct StatCardTitle
+        {
+            public const string MyEmployees = "My Employees";
+            public const string EmployeeDependents = "Employee Dependents";      
+            public const string DeductionBiWeeklyTotal = "Deduction Total bi-weekly";
+            public const string DeductionPerMonthTotal = "Deduction Total per month";
+            public const string DeductionTotalPerYearTotal = "Deduction Total per year";
         }
     }
 }

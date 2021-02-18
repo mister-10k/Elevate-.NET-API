@@ -18,9 +18,10 @@ namespace Elevate.Shared
         /// <returns>employee info</returns>
         EmployeeModel GetEmployee(int employeeId);
 
-        /// <summary>This method gets all employees.</summary>
+        /// <summary>This methof gets all employees for a company.</summary>
+        /// <param name="comapnyId">The companies Id</param>
         /// <returns>all employees</returns>
-        List<EmployeeModel> GetAllEmployees();
+        List<EmployeeModel> GetAllEmployeesForComapny(int comapnyId);
 
         /// <summary>This method updates a new employee.</summary>
         /// <param name="employeeModel">info for employee to update</param>
@@ -31,11 +32,6 @@ namespace Elevate.Shared
         /// <param name="employeeId">the id of the employee.</param>
         /// <returns>deleted employee info</returns>
         EmployeeModel DeleteEmployee(int employeeId);
-
-        /// <summary>This method gets data for cards on employment benifits dashboard.</summary>
-        /// <param name="companyId">the id of company data should be retrieved for.</param>
-        /// <returns>the card data</returns>
-        EBDashbaordStatsModel GetEBDashboardCardsData(int companyId);
 
         /// <summary>Gets list of employees for employee benifits dashboard</summary>
         /// <param name="requestModel">Data for request</param>

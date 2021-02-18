@@ -15,9 +15,24 @@ namespace Elevate.Business
             this.usersDL = usersDL;
         }
 
-        public string Test()
+        public UserModel CreateUser(UserModel userModel)
         {
-            return usersDL.Test();
+            return usersDL.CreateUser(userModel);
+        }
+
+        public UserModel GetUser(string email, string password)
+        {
+            return usersDL.GetUser(email, password);
+        }
+
+        public SignUpMasterDataModel GetSignUpMasterData()
+        {
+            return usersDL.GetSignUpMasterData();
+        }
+
+        public bool UserAlreadyHasEmail(string email)
+        {
+            return this.usersDL.UserAlreadyHasEmail(email);
         }
     }
 }

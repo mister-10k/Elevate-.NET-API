@@ -19,7 +19,7 @@ namespace Elevate.Data
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
                     var createdAt = DateTime.Now;
-                    var employeeUserType = dbContext.UserTypes.FirstOrDefault(x => x.Name == AppConstants.UserType.Employee);
+                    var employeeUserType = dbContext.UserTypes.FirstOrDefault(x => x.Name == AppConstants.UserType.Employee && x.IsActive == true);
                     if (employeeUserType != null)
                     {
                         var newEmployee = new User
@@ -53,7 +53,7 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Data Layer: CreateEmployee Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: CreateEmployee Exception Msg", ex.Message);
             }
 
             return ret;
@@ -85,7 +85,7 @@ namespace Elevate.Data
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
-                    var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId);
+                    var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId && x.IsActive == true);
                     if (employee != null)
                     {
                         ret = new EmployeeModel
@@ -106,13 +106,13 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Data Layer: GetEmployee Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: GetEmployee Exception Msg", ex.Message);
             }
 
             return ret;
         }
 
-        public List<EmployeeModel> GetAllEmployees()
+        public List<EmployeeModel> GetAllEmployeesForComapny(int companyId)
         {
             List<EmployeeModel> ret = null;
 
@@ -121,11 +121,11 @@ namespace Elevate.Data
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
 
-                    var employeeUserType = dbContext.UserTypes.FirstOrDefault(x => x.Name == AppConstants.UserType.Employee);
+                    var employeeUserType = dbContext.UserTypes.FirstOrDefault(x => x.Name == AppConstants.UserType.Employee && x.IsActive == true);
                     if (employeeUserType != null)
                     {
                         ret = (from U in dbContext.Users
-                               where U.IsActive == true && U.UserTypeId == employeeUserType.ID
+                               where U.IsActive == true && U.UserTypeId == employeeUserType.ID && U.CompanyId==companyId
                                select new EmployeeModel
                                {
                                    FirstName = U.FirstName,
@@ -149,7 +149,7 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Data Layer: GetAllEmployees Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: GetAllEmployees Exception Msg", ex.Message);
             }
 
             return ret;
@@ -184,7 +184,7 @@ namespace Elevate.Data
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
                     var modifiedAt = DateTime.Now;
-                    var e = dbContext.Users.FirstOrDefault(x => x.ID == employeeUpdateInfo.Id);
+                    var e = dbContext.Users.FirstOrDefault(x => x.ID == employeeUpdateInfo.Id && x.IsActive == true);
                     if (e != null)
                     {
                         UpdateEmployeeDependents(dbContext, employeeUpdateInfo.Dependents, employeeUpdateInfo.Id);
@@ -205,7 +205,7 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Data Layer: UpdateEmployee Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: UpdateEmployee Exception Msg", ex.Message);
             }
 
             return ret;
@@ -265,7 +265,7 @@ namespace Elevate.Data
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
-                    var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId);
+                    var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId && x.IsActive == true);
                     if (employee != null)
                     {
                         ret = new EmployeeModel { Dependents = new List<EmployeeDependentModel>() };
@@ -287,7 +287,7 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Data Layer: DeleteEmployee Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: DeleteEmployee Exception Msg", ex.Message);
             }
 
             return ret;
@@ -295,49 +295,11 @@ namespace Elevate.Data
 
         private void DeleteEmployeeDependents(ElevateEntities dbContext, int employeeId)
         {
-            var dependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId);
+            var dependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId && x.IsActive == true);
             foreach(var dependent in dependents)
             {
                 dependent.IsActive = false;
             }
-        }
-
-        public EBDashbaordStatsModel GetEBDashboardCardsData(int companyId)
-        {
-            var ret = new EBDashbaordStatsModel();
-
-            try
-            {
-                using (ElevateEntities dbContext = new ElevateEntities())
-                {
-                    ret.Employees = new List<EmployeeModel>();
-                    var employees = dbContext.Users.Where(x => x.CompanyId == companyId && x.UserType.Name == AppConstants.UserType.Employee);
-                    foreach(var employee in employees)
-                    {
-                        var EmployeeModel = new EmployeeModel
-                        {
-                            Id = employee.ID,
-                            FirstName = employee.FirstName,
-                            LastName = employee.LastName,
-                            Email = employee.Email,
-                            CompanyId = employee.CompanyId,
-                            CompanyName = employee.Company.Name,
-                            CompanyDisplayName = employee.Company.DisplayName,
-                            CreatedAt = employee.CreatedAt,
-                            ModifiedAt = employee.ModifiedAt,
-                            Dependents = new List<EmployeeDependentModel>()                       
-                        };
-                        GetEmployeeDependents(dbContext, EmployeeModel.Dependents, employee.ID);
-                        ret.Employees.Add(EmployeeModel);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Data Layer: GetEBDashboardCardsData Exception Msg", ex.Message);
-            }
-
-            return ret;
         }
 
         public TableModel<EmployeeModel> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
@@ -381,7 +343,7 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Data Layer: GetEmployeesForEBDashboard Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: GetEmployeesForEBDashboard Exception Msg", ex.Message);
             }
 
             return ret;
@@ -394,7 +356,7 @@ namespace Elevate.Data
             var dependents = (from ED in dbContext.EmployeeDependents
                               join employeeId in employeeIds on ED.EmployeeId equals employeeId
                               join R in dbContext.Relationships on ED.RelationshipId equals R.ID
-                              where ED.IsActive
+                              where ED.IsActive && R.IsActive
                               select new EmployeeDependentModel
                               {
                                   Id = ED.ID,
@@ -437,7 +399,7 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Data Layer: GetEmployeeFormMasterData Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: GetEmployeeFormMasterData Exception Msg", ex.Message);
             }
 
             return ret;

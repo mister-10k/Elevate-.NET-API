@@ -11,7 +11,9 @@ namespace Elevate.Shared
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        public string Password { get; set; }
         public int CompanyId { get; set; }
+        public int UserTypeId { get; set; }
         public string CompanyName { get; set; }
         public string CompanyDisplayName { get; set; }
         public DateTime? CreatedAt { get; set; }
