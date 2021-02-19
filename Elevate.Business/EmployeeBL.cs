@@ -14,32 +14,32 @@ namespace Elevate.Business
         {
             this.employeeDL = employeeDL;
         }
-        public EmployeeModel CreateEmployee(EmployeeModel employee)
+        public async Task<EmployeeModel> CreateEmployeeAsync(EmployeeModel employee)
         {
-            return employeeDL.CreateEmployee(employee);
+            return await employeeDL.CreateEmployeeAsync(employee);
         }
-        public EmployeeModel GetEmployee(int id)
+        public async Task<EmployeeModel> GetEmployeeAsync(int id)
         {
-            return employeeDL.GetEmployee(id);
-        }
-
-        public EmployeeModel UpdateEmployee(EmployeeModel employee)
-        {
-            return employeeDL.UpdateEmployee(employee);
+            return await employeeDL.GetEmployeeAsync(id);
         }
 
-        public EmployeeModel DeleteEmployee(int id)
+        public async Task<EmployeeModel> UpdateEmployeeAsync(EmployeeModel employee)
         {
-            return employeeDL.DeleteEmployee(id);
+            return await employeeDL.UpdateEmployeeAsync(employee);
         }
 
-        public List<EBDashbaordStatsCardModel> GetEBDashboardCardsData(int companyId)
+        public async Task<EmployeeModel> DeleteEmployeeAsync(int id)
+        {
+            return await employeeDL.DeleteEmployeeAsync(id);
+        }
+
+        public async Task<List<EBDashbaordStatsCardModel>> GetEBDashboardCardsDataAsync(int companyId)
         {
             List<EBDashbaordStatsCardModel> ret = null;
             try
             {
                 ret = new List<EBDashbaordStatsCardModel>();
-                var employees = employeeDL.GetAllEmployeesForComapny(companyId);
+                var employees = await employeeDL.GetAllEmployeesForComapnyAsync(companyId);
                 ret.Add(new EBDashbaordStatsCardModel
                 {
                     Title = AppConstants.StatCardTitle.MyEmployees,
@@ -78,7 +78,7 @@ namespace Elevate.Business
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Business Layer: GetEBDashboardCardsData Exception Msg", ex.Message);
+                Console.WriteLine("Business Layer: GetEBDashboardCardsDataAsync Exception Msg", ex.Message);
             }
             return ret;
         }
@@ -103,21 +103,21 @@ namespace Elevate.Business
             return total;
         }
 
-        public TableModel<EmployeeModel> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
+        public async Task<TableModel<EmployeeModel>> GetEmployeesForEBDashboardAsync(EBEmployeeListRequestModel requestModel)
         {
-            return employeeDL.GetEmployeesForEBDashboard(requestModel);
+            return await employeeDL.GetEmployeesForEBDashboardAsync(requestModel);
         }
 
-        public EmployeeFormMasterDataModel GetEmployeeFormMasterData()
+        public async Task<EmployeeFormMasterDataModel> GetEmployeeFormMasterDataAsync()
         {
-            return employeeDL.GetEmployeeFormMasterData();
+            return await employeeDL.GetEmployeeFormMasterDataAsync();
         }
 
-        public PrimeNGBarChartModel GetTop10HighestEmployeeDedcutions(int companyId)
+        public async Task<PrimeNGBarChartModel> GetTop10HighestEmployeeDedcutions(int companyId)
         {
             var ret = new PrimeNGBarChartModel();
 
-            var employees = employeeDL.GetAllEmployeesForComapny(companyId);
+            var employees = await employeeDL.GetAllEmployeesForComapnyAsync(companyId);
 
             if (employees != null)
             {

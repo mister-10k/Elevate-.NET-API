@@ -78,10 +78,6 @@
     <Compile Include="UserBL.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Data Access\Elevate.Data.csproj">
-      <Project>{681106a2-50fe-4236-9b9a-fb0e4403b1cc}</Project>
-      <Name>Elevate.Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Elevate.Shared\Elevate.Shared.csproj">
       <Project>{4b8edf1d-3e00-4f15-9a70-a4421f80d70c}</Project>
       <Name>Elevate.Shared</Name>

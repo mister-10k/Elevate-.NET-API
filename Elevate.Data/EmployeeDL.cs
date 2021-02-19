@@ -2,6 +2,7 @@
 using Elevate.Shared;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace Elevate.Data
 {
     public class EmployeeDL : IEmployeeDL
     {
-        public EmployeeModel CreateEmployee(EmployeeModel employee)
+        public async Task<EmployeeModel> CreateEmployeeAsync(EmployeeModel employee)
         {
             EmployeeModel ret = null;
 
@@ -19,7 +20,7 @@ namespace Elevate.Data
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
                     var createdAt = DateTime.Now;
-                    var employeeUserType = dbContext.UserTypes.FirstOrDefault(x => x.Name == AppConstants.UserType.Employee && x.IsActive == true);
+                    var employeeUserType = await dbContext.UserTypes.FirstOrDefaultAsync(x => x.Name == AppConstants.UserType.Employee && x.IsActive == true);
                     if (employeeUserType != null)
                     {
                         var newEmployee = new User
@@ -34,11 +35,11 @@ namespace Elevate.Data
                         };
 
                         dbContext.Users.Add(newEmployee);
-                        var employeeSaved = dbContext.SaveChanges() > 0;
+                        var employeeSaved = (await dbContext.SaveChangesAsync()) > 0;
 
                         if (employeeSaved)
                             AddEmployeeDependents(dbContext, employee.Dependents, newEmployee.ID);
-                        var depndentsSaved = dbContext.SaveChanges() > 0;
+                        var depndentsSaved = (await dbContext.SaveChangesAsync() > 0);
 
                         if (employeeSaved && (depndentsSaved || employee.Dependents.Count == 0))
                         {
@@ -53,7 +54,7 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Employee Data Layer: CreateEmployee Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: CreateEmployeeAsync Exception Msg", ex.Message);
             }
 
             return ret;
@@ -77,7 +78,7 @@ namespace Elevate.Data
             }
         }
 
-        public EmployeeModel GetEmployee(int employeeId)
+        public async Task<EmployeeModel> GetEmployeeAsync(int employeeId)
         {
             EmployeeModel ret = null;
 
@@ -85,7 +86,7 @@ namespace Elevate.Data
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
-                    var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId && x.IsActive == true);
+                    var employee = await dbContext.Users.FirstOrDefaultAsync(x => x.ID == employeeId && x.IsActive == true);
                     if (employee != null)
                     {
                         ret = new EmployeeModel
@@ -106,13 +107,13 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Employee Data Layer: GetEmployee Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: GetEmployeeAsync Exception Msg", ex.Message);
             }
 
             return ret;
         }
 
-        public List<EmployeeModel> GetAllEmployeesForComapny(int companyId)
+        public async Task<List<EmployeeModel>> GetAllEmployeesForComapnyAsync(int companyId)
         {
             List<EmployeeModel> ret = null;
 
@@ -121,10 +122,10 @@ namespace Elevate.Data
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
 
-                    var employeeUserType = dbContext.UserTypes.FirstOrDefault(x => x.Name == AppConstants.UserType.Employee && x.IsActive == true);
+                    var employeeUserType = await dbContext.UserTypes.FirstOrDefaultAsync(x => x.Name == AppConstants.UserType.Employee && x.IsActive == true);
                     if (employeeUserType != null)
                     {
-                        ret = (from U in dbContext.Users
+                        ret = await (from U in dbContext.Users
                                where U.IsActive == true && U.UserTypeId == employeeUserType.ID && U.CompanyId==companyId
                                select new EmployeeModel
                                {
@@ -143,13 +144,13 @@ namespace Elevate.Data
                                        CreatedAt = x.CreatedAt,
                                        ModifiedAt = x.ModifiedAt
                                    }).ToList()
-                               }).ToList();
+                               }).ToListAsync();
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Employee Data Layer: GetAllEmployees Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: GetAllEmployeesForComapnyAsync Exception Msg", ex.Message);
             }
 
             return ret;
@@ -175,7 +176,7 @@ namespace Elevate.Data
             }
         }
 
-        public EmployeeModel UpdateEmployee(EmployeeModel employeeUpdateInfo)
+        public async Task<EmployeeModel> UpdateEmployeeAsync(EmployeeModel employeeUpdateInfo)
         {
             EmployeeModel ret = null;
 
@@ -184,7 +185,7 @@ namespace Elevate.Data
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
                     var modifiedAt = DateTime.Now;
-                    var e = dbContext.Users.FirstOrDefault(x => x.ID == employeeUpdateInfo.Id && x.IsActive == true);
+                    var e = await dbContext.Users.FirstOrDefaultAsync(x => x.ID == employeeUpdateInfo.Id && x.IsActive == true);
                     if (e != null)
                     {
                         UpdateEmployeeDependents(dbContext, employeeUpdateInfo.Dependents, employeeUpdateInfo.Id);
@@ -205,7 +206,7 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Employee Data Layer: UpdateEmployee Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: UpdateEmployeeAsync Exception Msg", ex.Message);
             }
 
             return ret;
@@ -257,7 +258,7 @@ namespace Elevate.Data
             }
         }
 
-        public EmployeeModel DeleteEmployee(int employeeId)
+        public async Task<EmployeeModel> DeleteEmployeeAsync(int employeeId)
         {
             EmployeeModel ret = null;
 
@@ -265,16 +266,16 @@ namespace Elevate.Data
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
-                    var employee = dbContext.Users.FirstOrDefault(x => x.ID == employeeId && x.IsActive == true);
+                    var employee = await dbContext.Users.FirstOrDefaultAsync(x => x.ID == employeeId && x.IsActive == true);
                     if (employee != null)
                     {
                         ret = new EmployeeModel { Dependents = new List<EmployeeDependentModel>() };
                         GetEmployeeDependents(dbContext, ret.Dependents, employeeId);
 
                         employee.IsActive = false;
-                        DeleteEmployeeDependents(dbContext, employeeId);
+                        DeleteEmployeeAsyncDependents(dbContext, employeeId);
 
-                        if (dbContext.SaveChanges() > 0)
+                        if ((await dbContext.SaveChangesAsync()) > 0)
                         {
                             ret.FirstName = employee.FirstName;
                             ret.LastName = employee.LastName;
@@ -287,13 +288,13 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Employee Data Layer: DeleteEmployee Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: DeleteEmployeeAsync Exception Msg", ex.Message);
             }
 
             return ret;
         }
 
-        private void DeleteEmployeeDependents(ElevateEntities dbContext, int employeeId)
+        private void DeleteEmployeeAsyncDependents(ElevateEntities dbContext, int employeeId)
         {
             var dependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId && x.IsActive == true);
             foreach(var dependent in dependents)
@@ -302,7 +303,7 @@ namespace Elevate.Data
             }
         }
 
-        public TableModel<EmployeeModel> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
+        public async Task<TableModel<EmployeeModel>> GetEmployeesForEBDashboardAsync(EBEmployeeListRequestModel requestModel)
         {
             TableModel<EmployeeModel> ret = new TableModel<EmployeeModel> { Rows = new List<EmployeeModel>() };
 
@@ -310,14 +311,19 @@ namespace Elevate.Data
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
-                    var data = dbContext.GetEmployeesForEBDashboard(
-                        requestModel.CompanyId,
-                        requestModel.SearchText,
-                        requestModel.SortBy,
-                        requestModel.SortColumn,
-                        requestModel.PageSize,
-                        requestModel.PageNumber
-                    ).ToList();
+                    List<GetEmployeesForEBDashboard_Result> data = new List<GetEmployeesForEBDashboard_Result>();
+                    Task<List<GetEmployeesForEBDashboard_Result>> task = new Task<List<GetEmployeesForEBDashboard_Result>>(() => {
+                        return dbContext.GetEmployeesForEBDashboard(
+                                    requestModel.CompanyId,
+                                    requestModel.SearchText,
+                                    requestModel.SortBy,
+                                    requestModel.SortColumn,
+                                    requestModel.PageSize,
+                                    requestModel.PageNumber
+                               ).ToList();
+                    });
+                    task.Start();
+                    data = await task;
 
                     if (data.Count > 0)
                     {
@@ -343,7 +349,7 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Employee Data Layer: GetEmployeesForEBDashboard Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: GetEmployeesForEBDashboardAsync Exception Msg", ex.Message);
             }
 
             return ret;
@@ -383,7 +389,7 @@ namespace Elevate.Data
             }
         }
 
-        public EmployeeFormMasterDataModel GetEmployeeFormMasterData()
+        public async Task<EmployeeFormMasterDataModel> GetEmployeeFormMasterDataAsync()
         {
             EmployeeFormMasterDataModel ret = null;
 
@@ -393,31 +399,31 @@ namespace Elevate.Data
                 {
                     ret = new EmployeeFormMasterDataModel
                     {
-                        Relationships = GetRelationshipsForEmployeeForm(dbContext)
+                        Relationships = await GetRelationshipsForEmployeeFormAsync(dbContext)
                     };
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Employee Data Layer: GetEmployeeFormMasterData Exception Msg", ex.Message);
+                Console.WriteLine("Employee Data Layer: GetEmployeeFormMasterDataAsync Exception Msg", ex.Message);
             }
 
             return ret;
         }
 
-        private  List<ListItem> GetRelationshipsForEmployeeForm(ElevateEntities dbContext)
+        private  async Task<List<ListItem>> GetRelationshipsForEmployeeFormAsync(ElevateEntities dbContext)
         {
-            return (from R in dbContext.Relationships
-                    where R.IsActive
-                    select new
-                    {
-                        Value = R.ID,
-                        Text = R.DisplayName
-                    }).Select(x => new ListItem
-                    {
-                        Value = x.Value.ToString(),
-                        Text = x.Text
-                    }).ToList();
+            return await (from R in dbContext.Relationships
+                          where R.IsActive
+                          select new
+                          {
+                              Value = R.ID,
+                              Text = R.DisplayName
+                          }).Select(x => new ListItem
+                          {
+                              Value = x.Value.ToString(),
+                              Text = x.Text
+                          }).ToListAsync();
         }
     }
 }

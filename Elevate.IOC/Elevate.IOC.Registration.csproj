@@ -80,11 +80,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Business\Elevate.Business.csproj">
+    <ProjectReference Include="..\Elevate.Business\Elevate.Business.csproj">
       <Project>{91e3b2ee-9728-4824-bd2c-55a3a8dc23bf}</Project>
       <Name>Elevate.Business</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Data Access\Elevate.Data.csproj">
+    <ProjectReference Include="..\Elevate.Data\Elevate.Data.csproj">
       <Project>{681106a2-50fe-4236-9b9a-fb0e4403b1cc}</Project>
       <Name>Elevate.Data</Name>
     </ProjectReference>
