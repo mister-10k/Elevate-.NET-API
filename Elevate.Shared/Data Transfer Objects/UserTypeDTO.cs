@@ -5,9 +5,7 @@ using System.Web;
 
 namespace Elevate.Shared
 {
-    public class ListItem
+    public class UserTypeDTO: ListItemDTO
     {
-        public string Value { get; set; }
-        public string Text { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Elevate.Shared
 {
-    public class EmployeeDependentModel : UserModel
+    public class EmployeeDependentDTO : UserDTO
     {    
         public int EmployeeId { get; set; }
         public int RelationshipId { get; set; }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BC = BCrypt.Net.BCrypt;
 
 namespace Elevate.Business
 {
@@ -15,17 +16,23 @@ namespace Elevate.Business
             this.usersDL = usersDL;
         }
 
-        public async Task<UserModel> CreateUserAsync(UserModel userModel)
+        public async Task<UserDTO> CreateUserAsync(UserDTO userDTO)
         {
-            return await usersDL.CreateUserAsync(userModel);
+            return await usersDL.CreateUserAsync(userDTO);
         }
 
-        public async Task<UserModel> GetUserAsync(string email, string password)
+        public async Task<UserDTO> LoginAsync(string email, string password)
         {
-            return await usersDL.GetUserAsync(email, password);
+            var userDTO = await usersDL.GetUserByEmailAsync(email);
+            var match = BC.Verify(password, userDTO.Password);
+            if (match)
+            {
+                return userDTO;
+            }
+            return null;
         }
 
-        public async Task<SignUpMasterDataModel> GetSignUpMasterDataAsync()
+        public async Task<SignUpMasterDataDTO> GetSignUpMasterDataAsync()
         {
             return await usersDL.GetSignUpMasterDataAsync();
         }

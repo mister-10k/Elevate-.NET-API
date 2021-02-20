@@ -1,65 +1,78 @@
 ﻿using Elevate.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Elevate.Models;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using AutoMapper;
 
 namespace Elevate.Controllers
 {
     public class UserController : ApiController
     {
         private readonly IUserBL userBL;
-        public UserController(IUserBL userBL)
+        private readonly IMapper mapper;
+        public UserController(IUserBL userBL, IMapper mapper)
         {
             this.userBL = userBL;
+            this.mapper = mapper;
         }
 
         [Route("api/user/login")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<HttpResponseMessage> Login(UserModel userModel)
+        public async Task<IHttpActionResult> Login(UserModel userModel)
         {
-            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-
-            var user = await userBL.GetUserAsync(userModel.Email, userModel.Password);
-            if (user != null)
+            if (userModel != null)
             {
-                response = Request.CreateResponse(HttpStatusCode.OK, TokenManager.GenerateToken(user.Email, user.CompanyId));
+                var result = await userBL.LoginAsync(userModel.Email, userModel.Password);
+                if (result != null)
+                {
+                    return Ok(TokenManager.GenerateToken(result.Email, result.CompanyId));
+                }
             }
-
-            return response;
+ 
+            return Unauthorized();
         }
 
         [Route("api/user/GetSignUpMasterData")]
         [AllowAnonymous]
         [HttpGet]
-        public async Task<SignUpMasterDataModel> GetSignUpMasterData()
+        public async Task<IHttpActionResult> GetSignUpMasterData()
         {
-            return await userBL.GetSignUpMasterDataAsync();
+            var result = await userBL.GetSignUpMasterDataAsync();
+            if (result != null)
+            {
+                return Ok(mapper.Map<SignUpMasterDataModel>(result));
+            }
+
+            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.ResourceNotFound);
         }
 
         [Route("api/user/UserAlreadyHasEmail")]
         [HttpPost]
-        public async Task<bool> UserAlreadyHasEmail(UserModel user)
+        public async Task<IHttpActionResult> UserAlreadyHasEmail(UserModel user)
         {
-            return await userBL.UserAlreadyHasEmailAsync(user.Email);
+            return Ok(await userBL.UserAlreadyHasEmailAsync(user.Email));
         }
 
         [Route("api/user/SignUp")]
         [HttpPost]
-        public async Task<string> SignUp(UserModel userModel)
-        {
-            string token = null;
-            var user = await userBL.CreateUserAsync(userModel);
-            if (user != null)
+        public async Task<IHttpActionResult> SignUp(UserModel userModel)
+        {   
+            if (userModel != null)
             {
-                token = TokenManager.GenerateToken(user.Email, user.CompanyId);
+                var userDTO = mapper.Map<UserDTO>(userModel);
+
+                var result = await userBL.CreateUserAsync(userDTO);
+                if (result != null)
+                {
+                    return Ok(TokenManager.GenerateToken(result.Email, result.CompanyId));
+                }
             }
 
-            return token;
+
+            return Unauthorized();
         }
     }
 }

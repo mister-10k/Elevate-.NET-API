@@ -11,9 +11,9 @@ namespace Elevate.Data
 {
     public class EmployeeDL : IEmployeeDL
     {
-        public async Task<EmployeeModel> CreateEmployeeAsync(EmployeeModel employee)
+        public async Task<EmployeeDTO> CreateEmployeeAsync(EmployeeDTO employee)
         {
-            EmployeeModel ret = null;
+            EmployeeDTO ret = null;
 
             try
             {
@@ -36,16 +36,20 @@ namespace Elevate.Data
 
                         dbContext.Users.Add(newEmployee);
                         var employeeSaved = (await dbContext.SaveChangesAsync()) > 0;
+                        var dependentsSaved = false;
 
                         if (employeeSaved)
-                            AddEmployeeDependents(dbContext, employee.Dependents, newEmployee.ID);
-                        var depndentsSaved = (await dbContext.SaveChangesAsync() > 0);
+                            dependentsSaved = await AddEmployeeDependents(dbContext, employee.Dependents, newEmployee.ID);
 
-                        if (employeeSaved && (depndentsSaved || employee.Dependents.Count == 0))
+
+                        if (employeeSaved && dependentsSaved)
                         {
                             employee.Id = newEmployee.ID;
                             employee.CreatedAt = createdAt;
-                            employee.CreatedAtText = employee.CreatedAt != null && employee.CreatedAt.HasValue ? employee.CreatedAt.Value.ToString("MM/dd/yyy") : string.Empty;
+                            var company = await dbContext.Companies.FirstOrDefaultAsync(x => x.ID == newEmployee.CompanyId);
+                            if (company != null)
+                                employee.CompanyDisplayName = company.DisplayName;
+
                             ret = employee;
                         }
                     }
@@ -60,27 +64,38 @@ namespace Elevate.Data
             return ret;
         }
 
-        private void AddEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentModel> dependents, int employeeId)
+        private async Task<bool> AddEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentDTO> dependents, int employeeId)
         {
             foreach (var dependent in dependents)
             {
-                var newDependent = new EmployeeDependent
+                var createdAt = DateTime.Now;
+                var dbDependent = new EmployeeDependent
                 {
                     EmployeeId = employeeId,
                     FirstName = dependent.FirstName,
                     LastName = dependent.LastName,
                     RelationshipId = dependent.RelationshipId,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = createdAt,
                     IsActive = true
                 };
 
-                dbContext.EmployeeDependents.Add(newDependent);
+                dbContext.EmployeeDependents.Add(dbDependent);
+                await dbContext.SaveChangesAsync();
+
+                dependent.Id = dbDependent.ID;
+                dependent.EmployeeId = employeeId;
+                var relationship = await dbContext.Relationships.FirstOrDefaultAsync(x => x.ID == dependent.RelationshipId);
+                if (relationship != null)
+                    dependent.RelationshipDisplayName = relationship.DisplayName;
+                dependent.CreatedAt = createdAt;            
             }
+
+            return true;
         }
 
-        public async Task<EmployeeModel> GetEmployeeAsync(int employeeId)
+        public async Task<EmployeeDTO> GetEmployeeAsync(int employeeId)
         {
-            EmployeeModel ret = null;
+            EmployeeDTO ret = null;
 
             try
             {
@@ -89,17 +104,18 @@ namespace Elevate.Data
                     var employee = await dbContext.Users.FirstOrDefaultAsync(x => x.ID == employeeId && x.IsActive == true);
                     if (employee != null)
                     {
-                        ret = new EmployeeModel
+                        ret = new EmployeeDTO
                         {
                             Id = employee.ID,
                             FirstName = employee.FirstName,
                             LastName = employee.LastName,
+                            Email = employee.Email,
                             CompanyName = employee.Company.Name,
                             CompanyDisplayName = employee.Company.DisplayName,
                             CompanyId = employee.CompanyId,
                             CreatedAt = employee.CreatedAt,
                             ModifiedAt = employee.ModifiedAt,
-                            Dependents = new List<EmployeeDependentModel>()
+                            Dependents = new List<EmployeeDependentDTO>()
                         };
                         GetEmployeeDependents(dbContext, ret.Dependents, employeeId);
                     }
@@ -113,9 +129,9 @@ namespace Elevate.Data
             return ret;
         }
 
-        public async Task<List<EmployeeModel>> GetAllEmployeesForComapnyAsync(int companyId)
+        public async Task<List<EmployeeDTO>> GetAllEmployeesForComapnyAsync(int companyId)
         {
-            List<EmployeeModel> ret = null;
+            List<EmployeeDTO> ret = null;
 
             try
             {
@@ -127,14 +143,14 @@ namespace Elevate.Data
                     {
                         ret = await (from U in dbContext.Users
                                where U.IsActive == true && U.UserTypeId == employeeUserType.ID && U.CompanyId==companyId
-                               select new EmployeeModel
+                               select new EmployeeDTO
                                {
                                    FirstName = U.FirstName,
                                    LastName = U.LastName,
                                    Email = U.Email,
                                    CompanyId = U.CompanyId,
                                    CreatedAt = U.CreatedAt,
-                                   Dependents = U.EmployeeDependents.Select(x => new EmployeeDependentModel
+                                   Dependents = U.EmployeeDependents.Select(x => new EmployeeDependentDTO
                                    {
                                        Id = x.ID,
                                        EmployeeId = x.EmployeeId,
@@ -156,13 +172,13 @@ namespace Elevate.Data
             return ret;
         }
 
-        private void GetEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentModel> dependents, int employeeId)
+        private void GetEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentDTO> dependents, int employeeId)
         {
             var dbDependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId && x.IsActive);
 
             foreach(var dbDependent in dbDependents)
             {
-                var d = new EmployeeDependentModel
+                var d = new EmployeeDependentDTO
                 {
                     Id = dbDependent.ID,
                     EmployeeId = dbDependent.EmployeeId,
@@ -176,30 +192,32 @@ namespace Elevate.Data
             }
         }
 
-        public async Task<EmployeeModel> UpdateEmployeeAsync(EmployeeModel employeeUpdateInfo)
+        public async Task<EmployeeDTO> UpdateEmployeeAsync(EmployeeDTO employeeDTO)
         {
-            EmployeeModel ret = null;
+            EmployeeDTO ret = null;
 
             try
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
                     var modifiedAt = DateTime.Now;
-                    var e = await dbContext.Users.FirstOrDefaultAsync(x => x.ID == employeeUpdateInfo.Id && x.IsActive == true);
+                    var e = await dbContext.Users.FirstOrDefaultAsync(x => x.ID == employeeDTO.Id && x.IsActive == true);
                     if (e != null)
                     {
-                        UpdateEmployeeDependents(dbContext, employeeUpdateInfo.Dependents, employeeUpdateInfo.Id);
-                        e.FirstName = employeeUpdateInfo.FirstName;
-                        e.LastName = employeeUpdateInfo.LastName;
-                        e.Email = employeeUpdateInfo.Email;
+                        UpdateEmployeeDependents(dbContext, employeeDTO.Dependents, employeeDTO.Id);
+                        e.FirstName = employeeDTO.FirstName;
+                        e.LastName = employeeDTO.LastName;
+                        e.Email = employeeDTO.Email;
+                        e.CompanyId = employeeDTO.CompanyId;
                         e.ModifiedAt = modifiedAt;
                     }
 
-                    if (dbContext.SaveChanges() > 0)
+                    if ((await dbContext.SaveChangesAsync()) > 0)
                     {
-                        employeeUpdateInfo.ModifiedAt = modifiedAt;
-                        employeeUpdateInfo.ModifiedAtText = modifiedAt.ToString("MM/dd/yyy");
-                        ret = employeeUpdateInfo;
+                        employeeDTO.ModifiedAt = modifiedAt;
+                        ret = employeeDTO;
+                        ret.CreatedAt = e.CreatedAt;
+                        ret.CompanyDisplayName = e.Company.DisplayName;
                     }
 
                 }
@@ -212,7 +230,7 @@ namespace Elevate.Data
             return ret;
         }
 
-        private void UpdateEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentModel> dependents, int employeeId)
+        private void UpdateEmployeeDependents(ElevateEntities dbContext, List<EmployeeDependentDTO> dependents, int employeeId)
         {
             var dbDependents = dbContext.EmployeeDependents.Where(x => x.EmployeeId == employeeId && x.IsActive);
 
@@ -258,9 +276,9 @@ namespace Elevate.Data
             }
         }
 
-        public async Task<EmployeeModel> DeleteEmployeeAsync(int employeeId)
+        public async Task<EmployeeDTO> DeleteEmployeeAsync(int employeeId)
         {
-            EmployeeModel ret = null;
+            EmployeeDTO ret = null;
 
             try
             {
@@ -269,7 +287,7 @@ namespace Elevate.Data
                     var employee = await dbContext.Users.FirstOrDefaultAsync(x => x.ID == employeeId && x.IsActive == true);
                     if (employee != null)
                     {
-                        ret = new EmployeeModel { Dependents = new List<EmployeeDependentModel>() };
+                        ret = new EmployeeDTO { Dependents = new List<EmployeeDependentDTO>() };
                         GetEmployeeDependents(dbContext, ret.Dependents, employeeId);
 
                         employee.IsActive = false;
@@ -277,9 +295,12 @@ namespace Elevate.Data
 
                         if ((await dbContext.SaveChangesAsync()) > 0)
                         {
+                            ret.Id = employee.ID;
+                            ret.Email = employee.Email;
                             ret.FirstName = employee.FirstName;
                             ret.LastName = employee.LastName;
                             ret.CompanyId = employee.CompanyId;
+                            ret.CompanyDisplayName = employee.Company.DisplayName;
                             ret.CreatedAt = employee.CreatedAt;
                             ret.ModifiedAt = employee.ModifiedAt;
                         }
@@ -303,9 +324,9 @@ namespace Elevate.Data
             }
         }
 
-        public async Task<TableModel<EmployeeModel>> GetEmployeesForEBDashboardAsync(EBEmployeeListRequestModel requestModel)
+        public async Task<TableDTO<EmployeeDTO>> GetEmployeesForEBDashboardAsync(EBEmployeeListRequestDTO requestModel)
         {
-            TableModel<EmployeeModel> ret = new TableModel<EmployeeModel> { Rows = new List<EmployeeModel>() };
+            TableDTO<EmployeeDTO> ret = new TableDTO<EmployeeDTO> { Rows = new List<EmployeeDTO>() };
 
             try
             {
@@ -327,7 +348,7 @@ namespace Elevate.Data
 
                     if (data.Count > 0)
                     {
-                        var rows = data.Select(employee => new EmployeeModel
+                        var rows = data.Select(employee => new EmployeeDTO
                         {
                             Id = employee.Id,
                             FirstName = employee.FirstName,
@@ -335,9 +356,8 @@ namespace Elevate.Data
                             Email = employee.Email,
                             CompanyId = employee.CompanyId,
                             CompanyDisplayName = employee.CompanyDisplayName,
-                            NumberOfDependents = employee.NumberOfDependents ?? 0,
-                            Dependents = new List<EmployeeDependentModel>(),
-                            CreatedAtText = employee.CreatedAt
+                            Dependents = new List<EmployeeDependentDTO>(),
+                            CreatedAt = employee.CreatedAt
                         }).ToList();
 
                         GetEmployeesDependents(dbContext, rows);
@@ -355,7 +375,7 @@ namespace Elevate.Data
             return ret;
         }
 
-        private void GetEmployeesDependents(ElevateEntities dbContext, List<EmployeeModel> employees)
+        private void GetEmployeesDependents(ElevateEntities dbContext, List<EmployeeDTO> employees)
         {
             var employeeIds = employees.Select(x => x.Id).ToList();
 
@@ -363,7 +383,7 @@ namespace Elevate.Data
                               join employeeId in employeeIds on ED.EmployeeId equals employeeId
                               join R in dbContext.Relationships on ED.RelationshipId equals R.ID
                               where ED.IsActive && R.IsActive
-                              select new EmployeeDependentModel
+                              select new EmployeeDependentDTO
                               {
                                   Id = ED.ID,
                                   EmployeeId = ED.EmployeeId,
@@ -378,26 +398,19 @@ namespace Elevate.Data
             foreach(var group in dependents)
             {
                 var employee = employees.FirstOrDefault(x => x.Id == group.Key);
-                if (employee != null)
-                {
-                    employee.Dependents = group.ToList();
-                    foreach(var d in employee.Dependents)
-                    {
-                        d.CreatedAtText = d.CreatedAt != null && d.CreatedAt.HasValue ? d.CreatedAt.Value.ToString("MM/dd/yyy") : string.Empty;
-                    }
-                }
+                employee.Dependents = group.ToList();
             }
         }
 
-        public async Task<EmployeeFormMasterDataModel> GetEmployeeFormMasterDataAsync()
+        public async Task<EmployeeFormMasterDataDTO> GetEmployeeFormMasterDataAsync()
         {
-            EmployeeFormMasterDataModel ret = null;
+            EmployeeFormMasterDataDTO ret = null;
 
             try
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
-                    ret = new EmployeeFormMasterDataModel
+                    ret = new EmployeeFormMasterDataDTO
                     {
                         Relationships = await GetRelationshipsForEmployeeFormAsync(dbContext)
                     };
@@ -411,18 +424,18 @@ namespace Elevate.Data
             return ret;
         }
 
-        private  async Task<List<ListItem>> GetRelationshipsForEmployeeFormAsync(ElevateEntities dbContext)
+        private  async Task<List<RelationshipDTO>> GetRelationshipsForEmployeeFormAsync(ElevateEntities dbContext)
         {
             return await (from R in dbContext.Relationships
                           where R.IsActive
-                          select new
+                          select new RelationshipDTO
                           {
-                              Value = R.ID,
-                              Text = R.DisplayName
-                          }).Select(x => new ListItem
-                          {
-                              Value = x.Value.ToString(),
-                              Text = x.Text
+                              Id = R.ID,
+                              Name = R.Name,
+                              DisplayName = R.DisplayName,
+                              CreatedAt = R.CreatedAt,
+                              ModifiedAt = R.ModifiedAt,
+                              IsActive = R.IsActive
                           }).ToListAsync();
         }
     }

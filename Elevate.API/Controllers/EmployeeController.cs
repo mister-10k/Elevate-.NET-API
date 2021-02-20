@@ -1,75 +1,145 @@
 ﻿using Elevate.Shared;
+using Elevate.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using AutoMapper;
+using System.Net;
 
 namespace Elevate.Controllers
 {
     public class EmployeeController : ApiController
     {
         private readonly IEmployeeBL employeeBL;
-        public EmployeeController(IEmployeeBL employeeBL)
+        private readonly IMapper mapper;
+
+        public EmployeeController(IEmployeeBL employeeBL, IMapper mapper)
         {
             this.employeeBL = employeeBL;
+            this.mapper = mapper;
         }
 
+        [Route("api/employee")]
         [HttpPost]
-        public async Task<EmployeeModel> Post(EmployeeModel employee)
+        public async Task<IHttpActionResult> Post(EmployeeModel employeeModel)
         {
-            return await this.employeeBL.CreateEmployeeAsync(employee);
+            if (employeeModel != null)
+            {
+                var employeeDTO = mapper.Map<EmployeeDTO>(employeeModel);
+
+                var result = await this.employeeBL.CreateEmployeeAsync(employeeDTO);
+                if (result != null)
+                {
+                    return Ok(mapper.Map<EmployeeModel>(result));
+                }
+            }
+
+            return Content(HttpStatusCode.Conflict, AppConstants.HttpErrorMessage.FailedPost);
         }
 
         [Route("api/employee/{employeeId}")]
         [HttpGet]
-        public async Task<EmployeeModel> GetEmployee(int employeeId)
+        public async Task<IHttpActionResult> GetEmployee(int employeeId)
         {
-            return await employeeBL.GetEmployeeAsync(employeeId);
+            var result = await employeeBL.GetEmployeeAsync(employeeId);
+            if (result != null)
+            {
+                return Ok(mapper.Map<EmployeeModel>(result));
+            }
 
+            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.ResourceNotFound);
         }
 
-        [Route("api/employee/{employeeId}")]
+        [Route("api/employee")]
         [HttpPut]
-        public async Task<EmployeeModel> UpdateEmployee(EmployeeModel employee)
+        public async Task<IHttpActionResult> UpdateEmployee(EmployeeModel employeeModel)
         {
-            return await this.employeeBL.UpdateEmployeeAsync(employee);
+            if (employeeModel != null)
+            {
+                var employeeDTO = mapper.Map<EmployeeDTO>(employeeModel);
+
+                var result = await this.employeeBL.UpdateEmployeeAsync(employeeDTO);
+                if (result != null)
+                {
+                    return Ok(mapper.Map<EmployeeModel>(result));
+                }
+            }
+
+            return Content(HttpStatusCode.Conflict, AppConstants.HttpErrorMessage.FailedPost);
         }
 
         [Route("api/employee/{employeeId}")]
         [HttpDelete]
-        public async Task<EmployeeModel> Delete(int employeeId)
+        public async Task<IHttpActionResult> Delete(int employeeId)
         {
-            return await employeeBL.DeleteEmployeeAsync(employeeId);
+            var result = await employeeBL.DeleteEmployeeAsync(employeeId);
+            if (result != null)
+            {
+                return Ok(mapper.Map<EmployeeModel>(result));
+            }
+
+            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.ResourceNotFound);
         }
 
         [Route("api/employee/getebdashboardcardsdata/{companyId}")]
         [HttpGet]
-        public async Task<List<EBDashbaordStatsCardModel>> GetEBDashboardCardsData(int companyId)
+        public async Task<IHttpActionResult> GetEBDashboardCardsData(int companyId)
         {
-            return await employeeBL.GetEBDashboardCardsDataAsync(companyId);
+            var result = await employeeBL.GetEBDashboardCardsDataAsync(companyId);
+            if (result != null)
+            {
+                return Ok(mapper.Map<List<EBDashbaordStatsCardModel>>(result));
+            }
+
+            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.ResourceNotFound);
         }
 
         [Route("api/employee/getEmployeesForEBDashboard")]
         [HttpPost]
-        public async Task<TableModel<EmployeeModel>> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
+        public async Task<IHttpActionResult> GetEmployeesForEBDashboard(EBEmployeeListRequestModel requestModel)
         {
-            return await employeeBL.GetEmployeesForEBDashboardAsync(requestModel);
+            if (requestModel != null)
+            {
+                var requestDTO = mapper.Map<EBEmployeeListRequestDTO>(requestModel);
+                
+                var result = await employeeBL.GetEmployeesForEBDashboardAsync(requestDTO);
+                if (result != null)
+                {
+                    return Ok(mapper.Map<TableModel<EmployeeModel>>(result));
+
+                }
+            }
+
+            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.ResourceNotFound);
         }
 
         [Route("api/employee/getEmployeeFormMasterData")]
         [HttpGet]
-        public async Task<EmployeeFormMasterDataModel> GetEmployeeFormMasterData()
+        public async Task<IHttpActionResult> GetEmployeeFormMasterData()
         {
-            return await employeeBL.GetEmployeeFormMasterDataAsync();
+            var result = await employeeBL.GetEmployeeFormMasterDataAsync();
+            if (result != null)
+            {
+                return Ok(mapper.Map<EmployeeFormMasterDataModel>(result));
+            }
+
+            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.FailedToLoadMasterData);
         }
 
         [Route("api/employee/getTop10HighestEmployeeDedcutions/{companyId}")]
         [HttpGet]
-        public async Task<PrimeNGBarChartModel> GetTop10HighestEmployeeDedcutions(int companyId)
+        public async Task<IHttpActionResult> GetTop10HighestEmployeeDedcutions(int companyId)
         {
-            return await employeeBL.GetTop10HighestEmployeeDedcutions(companyId);
+            var result = await employeeBL.GetTop10HighestEmployeeDedcutions(companyId);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.ResourceNotFound);
         }
     }
 }

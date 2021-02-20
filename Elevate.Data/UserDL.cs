@@ -11,9 +11,9 @@ namespace Elevate.Data
 {
     public class UserDL : IUserDL
     {
-        public async Task<UserModel> CreateUserAsync(UserModel userModel)
+        public async Task<UserDTO> CreateUserAsync(UserDTO userDTO)
         {
-            UserModel ret = null;
+            UserDTO ret = null;
 
             try
             {
@@ -22,21 +22,20 @@ namespace Elevate.Data
                     var createdAt = DateTime.Now;
                     var user = new User
                     {
-                        FirstName = userModel.FirstName,
-                        LastName = userModel.LastName,
-                        Email = userModel.Email,
-                        Password = userModel.Password,
-                        CompanyId = userModel.CompanyId,
-                        UserTypeId = userModel.UserTypeId,
+                        FirstName = userDTO.FirstName,
+                        LastName = userDTO.LastName,
+                        Email = userDTO.Email,
+                        Password = userDTO.Password,
+                        CompanyId = userDTO.CompanyId,
+                        UserTypeId = userDTO.UserTypeId,
                         IsActive = true,
                         CreatedAt = createdAt,
                     };
                     dbContext.Users.Add(user);
                     if ((await dbContext.SaveChangesAsync()) > 0)
                     {
-                        ret = userModel;
+                        ret = userDTO;
                         ret.CreatedAt = createdAt;
-                        ret.CreatedAtText = createdAt.ToString("MM/dd/yyy");
                     }
                 }
             }
@@ -48,9 +47,9 @@ namespace Elevate.Data
             return ret;
         }
 
-        public async Task<UserModel> GetUserAsync(string email, string password)
+        public async Task<UserDTO> GetUserByEmailAsync(string email)
         {
-            UserModel ret = null;
+            UserDTO ret = null;
 
             try
             {
@@ -58,12 +57,13 @@ namespace Elevate.Data
                 {
                      ret = await (from U in dbContext.Users
                                   join C in dbContext.Companies on U.CompanyId equals C.ID
-                                  where U.IsActive && C.IsActive && U.Email == email && U.Password == password
-                                  select new UserModel {
+                                  where U.IsActive && C.IsActive && U.Email == email
+                                  select new UserDTO {
                                       Id = U.ID,
                                       FirstName = U.FirstName,
                                       LastName = U.LastName,
                                       Email = U.Email,
+                                      Password = U.Password,
                                       CompanyId = C.ID,
                                       CompanyName = C.Name,
                                       CompanyDisplayName = C.DisplayName,
@@ -74,21 +74,21 @@ namespace Elevate.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("User Data Layer: GetUserAsync Exception Msg", ex.Message);
+                Console.WriteLine("User Data Layer: LoginAsync Exception Msg", ex.Message);
             }
 
             return ret;
         }
 
-        public async Task<SignUpMasterDataModel> GetSignUpMasterDataAsync()
+        public async Task<SignUpMasterDataDTO> GetSignUpMasterDataAsync()
         {
-            SignUpMasterDataModel ret = null;
+            SignUpMasterDataDTO ret = null;
 
             try
             {
                 using (ElevateEntities dbContext = new ElevateEntities())
                 {
-                    ret = new SignUpMasterDataModel
+                    ret = new SignUpMasterDataDTO
                     {
                         Companies = await GetComapniesForSignUpMasterDataAsync(dbContext),
                         UserTypes = await GetUserTypesForSignUpMasterDataAsync(dbContext)
@@ -104,33 +104,33 @@ namespace Elevate.Data
         }
 
 
-        private async Task<List<ListItem>> GetComapniesForSignUpMasterDataAsync(ElevateEntities dbContext)
+        private async Task<List<ComapnyDTO>> GetComapniesForSignUpMasterDataAsync(ElevateEntities dbContext)
         {
             return await (from C in dbContext.Companies
                           where C.IsActive
-                          select new
+                          select new ComapnyDTO
                           {
-                              Value = C.ID,
-                              Text = C.DisplayName
-                          }).Select(x => new ListItem
-                          {
-                              Value = x.Value.ToString(),
-                              Text = x.Text
+                              Id = C.ID,
+                              Name = C.Name,
+                              DisplayName = C.DisplayName,
+                              CreatedAt = C.CreatedAt,
+                              ModifiedAt = C.ModifiedAt,
+                              IsActive = C.IsActive
                           }).ToListAsync();
         }
 
-        private async Task<List<ListItem>> GetUserTypesForSignUpMasterDataAsync(ElevateEntities dbContext)
+        private async Task<List<UserTypeDTO>> GetUserTypesForSignUpMasterDataAsync(ElevateEntities dbContext)
         {
             return await (from UT in dbContext.UserTypes
                           where UT.IsActive && UT.Name != AppConstants.UserType.Employee
-                          select new
+                          select new UserTypeDTO
                           {
-                              Value = UT.ID,
-                              Text = UT.DisplayName
-                          }).Select(x => new ListItem
-                          {
-                              Value = x.Value.ToString(),
-                              Text = x.Text
+                              Id = UT.ID,
+                              Name = UT.Name,
+                              DisplayName = UT.DisplayName,
+                              CreatedAt = UT.CreatedAt,
+                              ModifiedAt = UT.ModifiedAt,
+                              IsActive = UT.IsActive
                           }).ToListAsync();
         }
 

@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elevate.Shared", "Elevate.Shared\Elevate.Shared.csproj", "{4B8EDF1D-3E00-4F15-9A70-A4421F80D70C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elevate.IOC.Registration", "Elevate.IOC\Elevate.IOC.Registration.csproj", "{13695605-0DF6-4E20-A74E-B9CC3FEE865F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elevate.Entities", "Elevate.Entities\Elevate.Entities.csproj", "{4D09E969-09FB-40DD-B7CC-9F00982DA6EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elevate.API", "Elevate.API\Elevate.API.csproj", "{80919969-7468-40F8-B990-9D4C4363276D}"
@@ -14,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elevate.Business", "Elevate.Business\Elevate.Business.csproj", "{91E3B2EE-9728-4824-BD2C-55A3A8DC23BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elevate.Data", "Elevate.Data\Elevate.Data.csproj", "{681106A2-50FE-4236-9B9A-FB0E4403B1CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elevate.IOC.Registration", "Elevate.IOC\Elevate.IOC.Registration.csproj", "{13695605-0DF6-4E20-A74E-B9CC3FEE865F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,6 @@ Global
 		{4B8EDF1D-3E00-4F15-9A70-A4421F80D70C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B8EDF1D-3E00-4F15-9A70-A4421F80D70C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B8EDF1D-3E00-4F15-9A70-A4421F80D70C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{13695605-0DF6-4E20-A74E-B9CC3FEE865F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{13695605-0DF6-4E20-A74E-B9CC3FEE865F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13695605-0DF6-4E20-A74E-B9CC3FEE865F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{13695605-0DF6-4E20-A74E-B9CC3FEE865F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4D09E969-09FB-40DD-B7CC-9F00982DA6EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4D09E969-09FB-40DD-B7CC-9F00982DA6EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D09E969-09FB-40DD-B7CC-9F00982DA6EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +41,10 @@ Global
 		{681106A2-50FE-4236-9B9A-FB0E4403B1CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{681106A2-50FE-4236-9B9A-FB0E4403B1CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{681106A2-50FE-4236-9B9A-FB0E4403B1CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13695605-0DF6-4E20-A74E-B9CC3FEE865F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13695605-0DF6-4E20-A74E-B9CC3FEE865F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13695605-0DF6-4E20-A74E-B9CC3FEE865F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13695605-0DF6-4E20-A74E-B9CC3FEE865F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

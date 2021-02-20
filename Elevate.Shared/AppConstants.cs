@@ -38,5 +38,15 @@ namespace Elevate.Shared
             public const string DeductionPerMonthTotal = "Deduction Total per month";
             public const string DeductionTotalPerYearTotal = "Deduction Total per year";
         }
+
+        public struct HttpErrorMessage
+        {
+            public const string FailedUpdate = "Update failed.";
+            public const string FailedPost = "Post failed.";
+            public const string ResourceNotFound = "Resource not found.";
+            public const string FailedToLoadMasterData = "Problem loading  master data.";
+        }
+
+
     }
 }

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Elevate.Shared
 {
-    public class EBEmployeeListRequestModel
+    public class EBEmployeeListRequestDTO
     {
         public int CompanyId { get; set; }
         public string SearchText { get; set; }

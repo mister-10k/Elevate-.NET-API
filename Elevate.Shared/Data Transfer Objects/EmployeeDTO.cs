@@ -5,10 +5,9 @@ using System.Web;
 
 namespace Elevate.Shared
 {
-    public class EmployeeModel : UserModel
+    public class EmployeeDTO : UserDTO
     {
-        public int NumberOfDependents { get; set; }
-        public List<EmployeeDependentModel> Dependents { get; set; }
+        public List<EmployeeDependentDTO> Dependents { get; set; }
         public double TotalDeduction { get; set; }
     }
 }

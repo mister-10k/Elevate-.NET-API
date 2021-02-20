@@ -1,4 +1,5 @@
-﻿using Elevate.Business;
+﻿using AutoMapper;
+using Elevate.Business;
 using Elevate.Data;
 using Elevate.Shared;
 using System;
@@ -24,8 +25,6 @@ namespace Elevate.IOC
             container.RegisterType<IEmployeeBL, EmployeeBL>(new HierarchicalLifetimeManager());
             container.RegisterType<IUserDL, UserDL>(new HierarchicalLifetimeManager());
             #endregion
-
-
 
         }
     }

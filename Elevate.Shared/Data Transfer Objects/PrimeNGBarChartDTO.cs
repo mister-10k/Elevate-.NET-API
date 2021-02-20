@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Elevate.Shared
 {
-    public class PrimeNGBarChartModel
+    public class PrimeNGBarChartDTO
     {
         public List<string> labels { get; set; }
-        public List<PrimeNGBarChartDataSetModel> datasets { get; set; }
+        public List<PrimeNGBarChartDataSetDTO> datasets { get; set; }
     }
 }

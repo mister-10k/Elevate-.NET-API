@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Elevate.Shared
 {
-    public class PrimeNGBarChartDataSetModel
+    public class PrimeNGBarChartDataSetDTO
     {
         public string label { get; set; }
         public string backgroundColor { get; set; }

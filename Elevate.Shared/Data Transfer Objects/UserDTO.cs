@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Elevate.Shared
 {
-    public class UserModel
+    public class UserDTO
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -16,9 +16,7 @@ namespace Elevate.Shared
         public int UserTypeId { get; set; }
         public string CompanyName { get; set; }
         public string CompanyDisplayName { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public string CreatedAtText { get; set; }
+        public DateTime CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
-        public string ModifiedAtText { get; set; }
     }
 }

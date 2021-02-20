@@ -18,6 +18,7 @@ namespace Elevate
             // Web API configuration and services
             var container = new UnityContainer();
             IOCRegistration.Register(container);
+            AutoMapper.SetupMappingsAndRegisterWithIOC(container);
             config.DependencyResolver = new UnityDependencyResolver(container);
 
             // cors

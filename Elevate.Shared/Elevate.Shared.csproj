@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=6.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.6.8.0\lib\net461\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
     </Reference>
@@ -105,23 +108,27 @@
   <ItemGroup>
     <Compile Include="AppConstants.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
+    <Compile Include="Converters\StringToDateTimeConverter.cs" />
     <Compile Include="Managers\TokenManager.cs" />
-    <Compile Include="Models\SignUpMasterDataModel.cs" />
-    <Compile Include="Models\ListItem.cs" />
-    <Compile Include="Models\EmployeeDependentModel.cs" />
-    <Compile Include="Models\EmployeeModel.cs" />
-    <Compile Include="Models\EBDashbaordStatsCardModel.cs" />
-    <Compile Include="Models\PrimeNGBarChartDataSetModel.cs" />
-    <Compile Include="Models\TableModel.cs" />
-    <Compile Include="Models\PrimeNGBarChartModel.cs" />
-    <Compile Include="Models\UserModel.cs" />
-    <Compile Include="Models\EmployeeFormMasterModel.cs" />
+    <Compile Include="Data Transfer Objects\ListItemDTO.cs" />
+    <Compile Include="Data Transfer Objects\CompanyDTO.cs" />
+    <Compile Include="Data Transfer Objects\RelationshipDTO.cs" />
+    <Compile Include="Data Transfer Objects\SignUpMasterDataDTO.cs" />
+    <Compile Include="Data Transfer Objects\UserTypeDTO.cs" />
+    <Compile Include="Data Transfer Objects\EmployeeDependentDTO.cs" />
+    <Compile Include="Data Transfer Objects\EmployeeDTO.cs" />
+    <Compile Include="Data Transfer Objects\EBDashbaordStatsCardDTO.cs" />
+    <Compile Include="Data Transfer Objects\PrimeNGBarChartDataSetDTO.cs" />
+    <Compile Include="Data Transfer Objects\TableDTO.cs" />
+    <Compile Include="Data Transfer Objects\PrimeNGBarChartDTO.cs" />
+    <Compile Include="Data Transfer Objects\UserDTO.cs" />
+    <Compile Include="Data Transfer Objects\EmployeeFormMasterDTO.cs" />
     <Compile Include="Interfaces\Business\IUserBL.cs" />
     <Compile Include="Interfaces\Business\IEmployeeBL.cs" />
     <Compile Include="Interfaces\Data\IEmployeeDL.cs" />
     <Compile Include="Interfaces\Data\IUserDL.cs" />
     <Compile Include="IOC\UnityResolver.cs" />
-    <Compile Include="Models\EBEmployeeListRequestModel.cs" />
+    <Compile Include="Data Transfer Objects\EBEmployeeListRequestDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utlities\EmployeeBenifitsUtility.cs" />
   </ItemGroup>

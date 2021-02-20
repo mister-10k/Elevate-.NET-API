@@ -8,7 +8,7 @@ namespace Elevate.Shared
 {
     public static class EmployeeBenifitsUtility
     {
-        public static double GetEmployeeDeductionCost(EmployeeModel employee)
+        public static double GetEmployeeDeductionCost(EmployeeDTO employee)
         {
             double total = 0.0;
             double employeeCost = AppConstants.EmployeeBenifits.CostOfEmployeeBenifits;

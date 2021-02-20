@@ -306,7 +306,7 @@
           <Property Type="String" Name="CompanyName" Nullable="false" MaxLength="500" />
           <Property Type="String" Name="CompanyDisplayName" Nullable="false" MaxLength="500" />
           <Property Type="Int32" Name="NumberOfDependents" Nullable="true" />
-          <Property Type="String" Name="CreatedAt" Nullable="true" MaxLength="10" />
+          <Property Type="DateTime" Name="CreatedAt" Nullable="false" Precision="23" />
           <Property Type="Int32" Name="TotalCount" Nullable="true" />
         </ComplexType>
       </Schema>
