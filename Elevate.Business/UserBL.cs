@@ -24,11 +24,15 @@ namespace Elevate.Business
         public async Task<UserDTO> LoginAsync(string email, string password)
         {
             var userDTO = await usersDL.GetUserByEmailAsync(email);
-            var match = BC.Verify(password, userDTO.Password);
-            if (match)
+            if (userDTO != null)
             {
-                return userDTO;
+                var match = BC.Verify(password, userDTO.Password);
+                if (match)
+                {
+                    return userDTO;
+                }           
             }
+                   
             return null;
         }
 

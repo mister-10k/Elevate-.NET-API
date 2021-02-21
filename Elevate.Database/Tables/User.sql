@@ -1,0 +1,16 @@
+﻿CREATE TABLE [User] (
+    ID INT IDENTITY (1, 1) NOT NULL,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+	[Email] VARCHAR(300) NOT NULL,
+	[Password] VARCHAR(500) NULL,
+	UserTypeId  INT NOT NULL,
+    CompanyId INT NOT NULL,
+	CreatedAt DATETIME NOT NULL,
+	ModifiedAt DATETIME NULL,
+    IsActive BIT NOT NULL,
+	CONSTRAINT [PK_User] PRIMARY KEY (ID),
+	CONSTRAINT [U_User_Email] UNIQUE([Email]),
+	CONSTRAINT [FK_User_UserTypeId] FOREIGN KEY (UserTypeId) REFERENCES UserType ([Id]),
+	CONSTRAINT [FK_User_CompanyId] FOREIGN KEY (CompanyId) REFERENCES Company ([Id])
+);

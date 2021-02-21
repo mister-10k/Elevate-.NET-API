@@ -204,11 +204,13 @@ namespace Elevate.Data
                     var e = await dbContext.Users.FirstOrDefaultAsync(x => x.ID == employeeDTO.Id && x.IsActive == true);
                     if (e != null)
                     {
-                        UpdateEmployeeDependents(dbContext, employeeDTO.Dependents, employeeDTO.Id);
+                        if (employeeDTO.Dependents != null)
+                            UpdateEmployeeDependents(dbContext, employeeDTO.Dependents, employeeDTO.Id);
                         e.FirstName = employeeDTO.FirstName;
                         e.LastName = employeeDTO.LastName;
                         e.Email = employeeDTO.Email;
-                        e.CompanyId = employeeDTO.CompanyId;
+                        if (employeeDTO.CompanyId != 0)
+                            e.CompanyId = employeeDTO.CompanyId;
                         e.ModifiedAt = modifiedAt;
                     }
 

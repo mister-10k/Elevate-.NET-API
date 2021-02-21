@@ -54,7 +54,7 @@ namespace Elevate.Controllers
         }
 
         [Route("api/employee")]
-        [HttpPut]
+        [HttpPatch]
         public async Task<IHttpActionResult> UpdateEmployee(EmployeeModel employeeModel)
         {
             if (employeeModel != null)
