@@ -122,15 +122,13 @@
     <Compile Include="Data Transfer Objects\PrimeNGBarChartDTO.cs" />
     <Compile Include="Data Transfer Objects\UserDTO.cs" />
     <Compile Include="Data Transfer Objects\EmployeeFormMasterDTO.cs" />
-    <Compile Include="Interfaces\Business\IUserBL.cs" />
-    <Compile Include="Interfaces\Business\IEmployeeBL.cs" />
-    <Compile Include="Interfaces\Data\IEmployeeDL.cs" />
-    <Compile Include="Interfaces\Data\IUserDL.cs" />
     <Compile Include="Data Transfer Objects\EBEmployeeListRequestDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utlities\EmployeeBenifitsUtility.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

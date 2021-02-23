@@ -82,8 +82,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UserDL.cs" />
-    <Compile Include="EmployeeDL.cs" />
+    <Compile Include="Interfaces\IEmployeeDL.cs" />
+    <Compile Include="Interfaces\IUserDL.cs" />
+    <Compile Include="Data Layers\UserDL.cs" />
+    <Compile Include="Data Layers\EmployeeDL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

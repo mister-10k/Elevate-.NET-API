@@ -31,22 +31,21 @@ namespace Elevate.UnitTests
 
 
         [TestMethod]
-        public async Task CreateEmployeeAsyncTest()
+        public async Task CreateEmployeeAsync_WithValidNotTakenEmail_ReturnsNewlyCreatedEmployeeDTO()
         {
             // Arrange
-            MockEmployeeDL
-              .Stub(x => x.CreateEmployeeAsync(Arg<EmployeeDTO>.Is.Anything))
-              .IgnoreArguments()
-              .Return(Task.FromResult(new EmployeeDTO()));
-
             var employeeDTO = new EmployeeDTO
             {
                 FirstName = "kwabena",
                 LastName = "Ohemeng",
-                Email = null,
+                Email = "kwabeohemeng2@gmail.com",
                 Password = "Welcome4",
                 UserTypeId = 2,
             };
+
+            MockEmployeeDL
+              .Stub(x => x.CreateEmployeeAsync(Arg<EmployeeDTO>.Is.NotNull))
+              .Return(Task.FromResult(employeeDTO));
 
             // Act
             var result = await employeeBL.CreateEmployeeAsync(employeeDTO);
@@ -56,14 +55,13 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task GetEmployeeAsyncTest()
+        public async Task GetEmployeeAsync_WithEmployeeIdGreaterThanZero_ReturnsEmployeeDTO()
         {
             MockEmployeeDL
              .Stub(x => x.GetEmployeeAsync(Arg<int>.Is.Anything))
-             .IgnoreArguments()
              .Return(Task.FromResult(new EmployeeDTO()));
 
-            var employeeId = 0;
+            var employeeId = 1;
 
             var result = await employeeBL.GetEmployeeAsync(employeeId);
 
@@ -71,20 +69,19 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task UpdateEmployeeAsyncTest()
+        public async Task UpdateEmployeeAsync_WithNotNullValidEmplyeeDTO_returnsEmployeeDTOOfUpdatedEmployee()
         {
-            MockEmployeeDL
-            .Stub(x => x.UpdateEmployeeAsync(Arg<EmployeeDTO>.Is.Anything))
-            .IgnoreArguments()
-            .Return(Task.FromResult(new EmployeeDTO()));
-
             var employeeDTO = new EmployeeDTO
             {
                 Id = 1,
                 FirstName = "kwabenaa",
                 LastName = "Ohemeng",
-                Email = "kwabeohemeng@gmail.com",
+                Email = "kwabeohemen2g@gmail.com",
             };
+
+            MockEmployeeDL
+            .Stub(x => x.UpdateEmployeeAsync(Arg<EmployeeDTO>.Is.NotNull))
+            .Return(Task.FromResult(employeeDTO));
 
             var result = await employeeBL.UpdateEmployeeAsync(employeeDTO);
 
@@ -93,14 +90,13 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task DeleteEmployeeAsyncTest()
+        public async Task DeleteEmployeeAsync_WithEmployeeIdGreaterThanZero_ReturnsEmployeeDTO()
         {
             MockEmployeeDL
             .Stub(x => x.DeleteEmployeeAsync(Arg<int>.Is.Anything))
-            .IgnoreArguments()
             .Return(Task.FromResult(new EmployeeDTO()));
 
-            var employeeId = 0;
+            var employeeId = 1;
 
             var result = await employeeBL.DeleteEmployeeAsync(employeeId);
 
@@ -108,11 +104,10 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task GetEBDashboardCardsDataAsyncTest()
+        public async Task GetEBDashboardCardsDataAsync_WithComapnyIdGreaterThanZero_ReturnsNotNullCardsData()
         {
             MockEmployeeDL
             .Stub(x => x.GetAllEmployeesForComapnyAsync(Arg<int>.Is.Anything))
-            .IgnoreArguments()
             .Return(Task.FromResult(new List<EmployeeDTO>()));
 
             var companyId = 1;
@@ -123,11 +118,10 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task GetEmployeesForEBDashboardAsyncTest()
+        public async Task GetEmployeesForEBDashboardAsync_WithValidRequestDTO_ReturnsNotNullTableDTO()
         {
             MockEmployeeDL
            .Stub(x => x.GetEmployeesForEBDashboardAsync(Arg<EBEmployeeListRequestDTO>.Is.Anything))
-           .IgnoreArguments()
            .Return(Task.FromResult(new TableDTO<EmployeeDTO>()));
 
             var requestDTO = new EBEmployeeListRequestDTO
@@ -146,11 +140,10 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task GetEmployeeFormMasterDataAsyncTest()
+        public async Task GetEmployeeFormMasterDataAsync_NoParameters_ReturnsNotNullMasterData()
         {
             MockEmployeeDL
            .Stub(x => x.GetEmployeeFormMasterDataAsync())
-           .IgnoreArguments()
            .Return(Task.FromResult(new EmployeeFormMasterDataDTO()));
 
 
@@ -160,11 +153,10 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task GetTop10HighestEmployeeDedcutionsTest()
+        public async Task GetTop10HighestEmployeeDedcutions_WithComapnyIdGreaterThanZero_ReturnsNotPrimeNGBarChartDTO()
         {
             MockEmployeeDL
             .Stub(x => x.GetAllEmployeesForComapnyAsync(Arg<int>.Is.Anything))
-            .IgnoreArguments()
             .Return(Task.FromResult(new List<EmployeeDTO>()));
 
             var companyId = 1;

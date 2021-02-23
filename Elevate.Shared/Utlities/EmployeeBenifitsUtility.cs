@@ -11,22 +11,29 @@ namespace Elevate.Shared
         public static double GetEmployeeDeductionCost(EmployeeDTO employee)
         {
             double total = 0.0;
-            double employeeCost = AppConstants.EmployeeBenifits.CostOfEmployeeBenifits;
-            if (employee.FirstName.ToUpper().StartsWith("A") )
-            {
-                employeeCost = employeeCost - (employeeCost * AppConstants.EmployeeBenifits.NameStartsWithADiscount);
-            }
-            total += employeeCost;
 
-            foreach(var dependent in employee.Dependents)
+            if (employee != null)
             {
-                double dependentCost = AppConstants.EmployeeBenifits.CostOfDependent;
-                if (dependent.FirstName.ToUpper().StartsWith("A"))
+                double employeeCost = AppConstants.EmployeeBenifits.CostOfEmployeeBenifits;
+                if (employee.FirstName.ToUpper().StartsWith("A"))
                 {
-                    dependentCost = dependentCost - (dependentCost * AppConstants.EmployeeBenifits.NameStartsWithADiscount);
+                    employeeCost = employeeCost - (employeeCost * AppConstants.EmployeeBenifits.NameStartsWithADiscount);
                 }
-                total += dependentCost;
-            }
+                total += employeeCost;
+
+                if (employee.Dependents != null)
+                {
+                    foreach (var dependent in employee.Dependents)
+                    {
+                        double dependentCost = AppConstants.EmployeeBenifits.CostOfDependent;
+                        if (dependent.FirstName.ToUpper().StartsWith("A"))
+                        {
+                            dependentCost = dependentCost - (dependentCost * AppConstants.EmployeeBenifits.NameStartsWithADiscount);
+                        }
+                        total += dependentCost;
+                    }
+                }
+            }          
 
             return Math.Round(total,2);
         }

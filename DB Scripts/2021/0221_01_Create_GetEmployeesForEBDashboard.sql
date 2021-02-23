@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[GetEmployeesForEBDashboard]   
+ALTER PROCEDURE [dbo].[GetEmployeesForEBDashboard]   
 (
   @CompanyId [INT] = 0,
   @SearchText NVARCHAR(1000)    = '',

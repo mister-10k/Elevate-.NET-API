@@ -75,6 +75,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Elevate.Business\Elevate.Business.csproj">
+      <Project>{91e3b2ee-9728-4824-bd2c-55a3a8dc23bf}</Project>
+      <Name>Elevate.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Elevate.IOC\Elevate.IOC.Registration.csproj">
       <Project>{13695605-0df6-4e20-a74e-b9cc3fee865f}</Project>
       <Name>Elevate.IOC.Registration</Name>

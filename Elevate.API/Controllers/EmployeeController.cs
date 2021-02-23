@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Http;
 using AutoMapper;
 using System.Net;
+using Elevate.Business;
 
 namespace Elevate.Controllers
 {
@@ -94,7 +95,7 @@ namespace Elevate.Controllers
                 return Ok(mapper.Map<List<EBDashbaordStatsCardModel>>(result));
             }
 
-            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.ResourceNotFound);
+            return BadRequest();
         }
 
         [Route("api/employee/getEmployeesForEBDashboard")]
@@ -113,7 +114,7 @@ namespace Elevate.Controllers
                 }
             }
 
-            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.ResourceNotFound);
+            return BadRequest();
         }
 
         [Route("api/employee/getEmployeeFormMasterData")]
@@ -126,7 +127,7 @@ namespace Elevate.Controllers
                 return Ok(mapper.Map<EmployeeFormMasterDataModel>(result));
             }
 
-            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.FailedToLoadMasterData);
+            return BadRequest();
         }
 
         [Route("api/employee/getTop10HighestEmployeeDedcutions/{companyId}")]
@@ -139,7 +140,7 @@ namespace Elevate.Controllers
                 return Ok(result);
             }
 
-            return Content(HttpStatusCode.NotFound, AppConstants.HttpErrorMessage.ResourceNotFound);
+            return BadRequest();
         }
     }
 }

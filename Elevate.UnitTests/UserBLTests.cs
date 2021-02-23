@@ -31,24 +31,22 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task CreateUserAsyncTest()
+        public async Task CreateUserAsync_WithValidNotTakenEmail_ReturnsNewlyCreatedUserDTO()
         {
             // Arrange
-            MockUserDL
-              .Stub(x => x.CreateUserAsync(Arg<UserDTO>.Is.Anything))
-              .IgnoreArguments()
-              .Return(Task.FromResult(new UserDTO()));
-
-
             var userDTO = new UserDTO
             {
                 FirstName = "kwabena",
                 LastName = "Ohemeng",
-                Email = null,
+                Email = "kwabe@gmail.com",
                 Password = "Welcome4",
                 UserTypeId = 1,
                 CompanyId = 1,
             };
+
+            MockUserDL
+              .Stub(x => x.CreateUserAsync(Arg<UserDTO>.Is.Anything))
+              .Return(Task.FromResult(userDTO));
 
             // Act
             var result = await userBL.CreateUserAsync(userDTO);
@@ -58,12 +56,14 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task LoginAsyncTest()
+        public async Task LoginAsyncTest_WithCorrectUserNameAndPassWord_ReturnsNotNullUserDTO()
         {
             MockUserDL
               .Stub(x => x.GetUserByEmailAsync(Arg<string>.Is.Anything))
-              .IgnoreArguments()
-              .Return(Task.FromResult(new UserDTO { Password = "$2a$10$90t/k6JnH1/VDpPiHJ3J.OS/whzww2cLRhdUKsUPUn4Rb9fVHyZ0y" }));
+              .Return(Task.FromResult(new UserDTO {
+                Email = "kwabeohemeng@gmail.com",
+                Password = "$2a$10$90t/k6JnH1/VDpPiHJ3J.OS/whzww2cLRhdUKsUPUn4Rb9fVHyZ0y" 
+              }));
 
             var email = "kwabeohemeng@gmail.com";
             var password = "Welcome4";
@@ -74,11 +74,10 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task GetSignUpMasterDataAsyncTest()
+        public async Task GetSignUpMasterDataAsync_NoParameters_ReturnsNotNullMasterData()
         {
             MockUserDL
              .Stub(x => x.GetSignUpMasterDataAsync())
-             .IgnoreArguments()
              .Return(Task.FromResult(new SignUpMasterDataDTO { }));
 
             var result = await userBL.GetSignUpMasterDataAsync();
@@ -87,11 +86,10 @@ namespace Elevate.UnitTests
         }
 
         [TestMethod]
-        public async Task UserAlreadyHasEmailAsyncTest()
+        public async Task UserAlreadyHasEmailAsync_WithEmailAlreadyInUse_ReturnsTrue()
         {
             MockUserDL
              .Stub(x => x.UserAlreadyHasEmailAsync(Arg<string>.Is.Anything))
-             .IgnoreArguments()
              .Return(Task.FromResult(true));
 
             var email = "kwabeohemeng@gmail.com";

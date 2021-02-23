@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using AutoMapper;
+using Elevate.Business;
 
 namespace Elevate.Controllers
 {
@@ -50,6 +51,7 @@ namespace Elevate.Controllers
         }
 
         [Route("api/user/UserAlreadyHasEmail")]
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IHttpActionResult> UserAlreadyHasEmail(UserModel user)
         {
@@ -57,6 +59,7 @@ namespace Elevate.Controllers
         }
 
         [Route("api/user/SignUp")]
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IHttpActionResult> SignUp(UserModel userModel)
         {   

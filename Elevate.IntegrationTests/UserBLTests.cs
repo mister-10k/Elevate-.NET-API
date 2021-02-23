@@ -1,4 +1,5 @@
-﻿using Elevate.IOC;
+﻿using Elevate.Business;
+using Elevate.IOC;
 using Elevate.Shared;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -22,7 +23,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task CreateUserAsyncTest()
+        public async Task CreateUserAsync_WithNoEmail_ReturnsNull()
         {
             // Arrange
             var userDTO = new UserDTO
@@ -43,7 +44,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task LoginAsyncTest()
+        public async Task LoginAsyncTest_WithCorrectUserNameAndPassWord_ReturnsNotNullUserDTO()
         {
             var email = "kwabeohemeng@gmail.com";
             var password = "Welcome4";
@@ -54,7 +55,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task GetSignUpMasterDataAsyncTest()
+        public async Task GetSignUpMasterDataAsync_NoParameters_ReturnsNotNullMasterData()
         {
             var result = await userBL.GetSignUpMasterDataAsync();
 
@@ -62,7 +63,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task UserAlreadyHasEmailAsyncTest()
+        public async Task UserAlreadyHasEmailAsyncTest_WithEmailAlreadyInUse_ReturnsTrue()
         {
             var email = "kwabeohemeng@gmail.com";
 

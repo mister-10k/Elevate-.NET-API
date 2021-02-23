@@ -1,4 +1,5 @@
-﻿using Elevate.IOC;
+﻿using Elevate.Business;
+using Elevate.IOC;
 using Elevate.Shared;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -21,7 +22,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task CreateEmployeeAsyncTest()
+        public async Task CreateEmployeeAsync_WithNoEmail_ReturnsNull()
         {
             // Arrange
             var employeeDTO = new EmployeeDTO
@@ -41,7 +42,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task GetEmployeeAsyncTest()
+        public async Task GetEmployeeAsync_WithEmployeeIdOfZero_ReturnsNull()
         {
             var employeeId = 0;
 
@@ -51,7 +52,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task UpdateEmployeeAsyncTest()
+        public async Task UpdateEmployeeAsync_WithExistingEmployee_ReturnsUpdatedEmployee()
         {
             // Arrange
             var employeeDTO = new EmployeeDTO
@@ -69,7 +70,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task DeleteEmployeeAsyncTest()
+        public async Task DeleteEmployeeAsync_WithEmployeeIdOfZero_ReturnsNull()
         {
             var employeeId = 0;
 
@@ -79,7 +80,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task GetEBDashboardCardsDataAsyncTest()
+        public async Task GetEBDashboardCardsDataAsync_WithComapnyIdOfOne_ReturnsCardsDataForCompanyWithIdOne()
         {
             var companyId = 1;
 
@@ -89,7 +90,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task GetEmployeesForEBDashboardAsyncTest()
+        public async Task GetEmployeesForEBDashboardAsync_WithReqDTOWithCompanyIdOfOne_ReturnsCardsDataBasedOfReqDTO()
         {
             var requestDTO = new EBEmployeeListRequestDTO
             {
@@ -107,7 +108,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task GetEmployeeFormMasterDataAsyncTest()
+        public async Task GetEmployeeFormMasterDataAsync_NoParameters_ReturnsNotNullMasterData()
         {
             var result = await  employeeBL.GetEmployeeFormMasterDataAsync();
 
@@ -115,7 +116,7 @@ namespace Elevate.IntegrationTests
         }
 
         [TestMethod]
-        public async Task GetTop10HighestEmployeeDedcutionsTest()
+        public async Task GetTop10HighestEmployeeDedcutions_WithReqDTOWithCompanyIdOfOne_ReturnsTop10EmployeesForHighestDeductions()
         {
             var companyId = 1;
 
