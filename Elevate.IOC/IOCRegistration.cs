@@ -17,12 +17,12 @@ namespace Elevate.IOC
         public static void Register(UnityContainer container)
         {
             #region Business Layer
-            container.RegisterType<IEmployeeDL, EmployeeDL>(new HierarchicalLifetimeManager());
+            container.RegisterType<IEmployeeBL, EmployeeBL>(new HierarchicalLifetimeManager());
             container.RegisterType<IUserBL, UserBL>(new HierarchicalLifetimeManager());
             #endregion
 
             #region Data Layer
-            container.RegisterType<IEmployeeBL, EmployeeBL>(new HierarchicalLifetimeManager());
+            container.RegisterType<IEmployeeDL, EmployeeDL>(new HierarchicalLifetimeManager());
             container.RegisterType<IUserDL, UserDL>(new HierarchicalLifetimeManager());
             #endregion
 
