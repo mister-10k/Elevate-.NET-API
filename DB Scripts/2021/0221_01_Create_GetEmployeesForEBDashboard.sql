@@ -1,4 +1,4 @@
-ALTER PROCEDURE [dbo].[GetEmployeesForEBDashboard]   
+CREATE PROCEDURE [dbo].[GetEmployeesForEBDashboard]   
 (
   @CompanyId [INT] = 0,
   @SearchText NVARCHAR(1000)    = '',
@@ -8,11 +8,11 @@ ALTER PROCEDURE [dbo].[GetEmployeesForEBDashboard]
   @PageNumber  [INT]      = 0  
 )  
 AS  
-BEGIN  
+BEGIN   
 
  IF(@SortColumn IS NULL)  
          SET @SortColumn = 'Id';
-  
+
  ----------------------------------------------------------------------------------------------------------------------------  
  --------------------------------------------------- CREATE TEMP TABLE ------------------------------------------------------  
  ----------------------------------------------------------------------------------------------------------------------------  
@@ -44,9 +44,9 @@ BEGIN
 	(
 	 SELECT
 		U.Id,
-		U.FirstName,
-		U.LastName,
-		U.Email,
+		UPPER(LEFT(U.FirstName,1))+LOWER(SUBSTRING(U.FirstName,2,LEN(U.FirstName))) as FirstName,
+		UPPER(LEFT(U.LastName,1))+LOWER(SUBSTRING(U.LastName,2,LEN(U.LastName))) as LastName,
+		LOWER(U.Email) as Email,
 		c.ID as CompanyId,
 		U.UserTypeId,
 		C.name as CompanyName,
